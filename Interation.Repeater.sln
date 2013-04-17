@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{C174E246-E42
 EndProject
 Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "Interation.Repeater.App", "App\Interation.Repeater.App\Interation.Repeater.App.jsproj", "{35C00A7B-6260-4E5E-97AC-588209A593E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interation.Repeater.Api.Web", "Api\Interation.Repeater.Api.Web\Interation.Repeater.Api.Web.csproj", "{ABC24E1F-FD00-421A-9431-6DE1CD93709A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,11 +45,22 @@ Global
 		{35C00A7B-6260-4E5E-97AC-588209A593E4}.Release|x86.ActiveCfg = Release|x86
 		{35C00A7B-6260-4E5E-97AC-588209A593E4}.Release|x86.Build.0 = Release|x86
 		{35C00A7B-6260-4E5E-97AC-588209A593E4}.Release|x86.Deploy.0 = Release|x86
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Release|ARM.ActiveCfg = Release|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Release|x64.ActiveCfg = Release|Any CPU
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{35C00A7B-6260-4E5E-97AC-588209A593E4} = {2CA3A04D-C4B6-4D28-8226-F68786EE6187}
+		{ABC24E1F-FD00-421A-9431-6DE1CD93709A} = {C174E246-E42C-4022-97D4-EBAC19BBB334}
 	EndGlobalSection
 EndGlobal

@@ -53,15 +53,25 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Css\Video.css" />
+    <Content Include="Images\Clear.png" />
+    <Content Include="Images\FooterBackground.jpg" />
+    <Content Include="Images\HeaderBackground.jpg" />
+    <Content Include="Images\Search.png" />
     <Content Include="Index.html" />
     <Content Include="Images\logo.png" />
     <Content Include="Images\smalllogo.png" />
     <Content Include="Images\splashscreen.png" />
     <Content Include="Images\storelogo.png" />
+    <Content Include="Js\Base\Config.js" />
+    <Content Include="Js\Controller\Video.js" />
     <Content Include="Js\cordova-2.5.0.js" />
     <Content Include="Css\Index.css" />
     <Content Include="Js\jquery-1.8.2-win8-1.0.min.js" />
-    <Content Include="Js\Modules\Index.js" />
+    <Content Include="Js\Controller\Index.js" />
+    <Content Include="Js\Service\Console.js" />
+    <Content Include="Js\Service\Repository.js" />
+    <Content Include="Player.html" />
     <None Include="Interation.Repeater.App_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

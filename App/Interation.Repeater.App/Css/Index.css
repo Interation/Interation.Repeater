@@ -1,1 +1,30 @@
-﻿
+﻿::-ms-clear { display: none; }
+
+body { background:#cbcbcb; font-family:'Helvetica Neue'; font-size:12px; height:100%; margin:0px; overflow:hidden; }
+body a { color:#000000; text-decoration:none; }
+body h1 { margin:0px; padding:0px; }
+body h2 { margin:0px; padding:0px; }
+body h3 { margin:0px; padding:0px; }
+body p { margin:0px; padding:0px; }
+body table { border:0px; border-collapse:collapse; margin:0px; padding:0px; }
+body table tr { margin:0px; padding:0px; }
+body table tr td { border:0px; margin:0px; padding:0px; }
+body ul { border:0px; margin:0px; padding:0px; }
+body ul li { border:0px; margin:0px; padding:0px; }
+
+div#header { background:url(../images/headerbackground.jpg) repeat-x; background-size:auto 100%; overflow:hidden; position:absolute; text-transform:capitalize; width:100%; }
+div#header h1 { color:rgba(0,0,0,0.5); margin:0px auto; text-align:center; text-transform:none; }
+div#header h1.template { display:none; }
+div#header input.button { background:red; border:none; margin:0px; padding:0px; position:absolute; top:0px; }
+div#header div.search { background:#ffffff url(../images/search.png) no-repeat left center; background-size:auto 100%; position:absolute; top:0; }
+div#header div.search input.keywords { background:transparent; border:none; float:left; padding:0px; width:150px; }
+div#header div.search input.empty { color:#cccccc; text-transform:capitalize; }
+div#header div.search a.clear { background:url(../images/clear.png) no-repeat; background-size:100% 100%; display:none; float:left; }
+div#header div.search.filled a.clear { display:block; }
+
+div#footer { background:url(../images/footerbackground.jpg) repeat-x; background-size:auto 100%; position:absolute; width:100%; }
+div#footer ul.menu { margin:0px auto; height:100%; }
+div#footer ul.menu>li { display:block; float:left; height:100%; }
+div#footer ul.menu>li a { color:rgba(255,255,255,0.75); display:block; height:100%; overflow:hidden; text-align:center; text-transform:capitalize; width:100%; }
+div#footer ul.menu>li a:hover { background:rgba(255,255,255,0.025); }
+div#footer ul.menu>li a.selected { background:rgba(255,255,255,0.1); }
