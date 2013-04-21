@@ -110,9 +110,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -124,12 +121,18 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="packages.config" />
+    <ProjectReference Include="..\..\IOC\Interation.Repeater.IOC\Interation.Repeater.IOC.csproj">
+      <Project>{4960c43a-cef9-4299-8cca-2ba96bd1a4cb}</Project>
+      <Name>Interation.Repeater.IOC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interation.Repeater.Api.Controllers\Interation.Repeater.Api.Controllers.csproj">
+      <Project>{ae625b31-aee5-4512-8714-3165f1b19008}</Project>
+      <Name>Interation.Repeater.Api.Controllers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interation.Repeater.Api.ViewModel\Interation.Repeater.Api.ViewModel.csproj">
+      <Project>{09a89558-cf67-490c-b1cd-a8209a131f68}</Project>
+      <Name>Interation.Repeater.Api.ViewModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

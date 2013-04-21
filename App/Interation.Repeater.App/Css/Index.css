@@ -1,30 +1,67 @@
 ﻿::-ms-clear { display: none; }
 
-body { background:#cbcbcb; font-family:'Helvetica Neue'; font-size:12px; height:100%; margin:0px; overflow:hidden; }
-body a { color:#000000; text-decoration:none; }
-body h1 { margin:0px; padding:0px; }
-body h2 { margin:0px; padding:0px; }
-body h3 { margin:0px; padding:0px; }
-body p { margin:0px; padding:0px; }
-body table { border:0px; border-collapse:collapse; margin:0px; padding:0px; }
-body table tr { margin:0px; padding:0px; }
-body table tr td { border:0px; margin:0px; padding:0px; }
-body ul { border:0px; margin:0px; padding:0px; }
-body ul li { border:0px; margin:0px; padding:0px; }
+html { height:100%; }
+html body { background:#000000; font-family:Arial; font-size:12px; height:100%; margin:0px; overflow:hidden; }
+html body.loading { background:#cbcbcb; }
+html a { color:#000000; text-decoration:none; }
+html h1, h2, h3 { margin:0px; padding:0px; }
+html p { margin:0px; padding:0px; }
+html table, tr, td { border:none; border-collapse:collapse; margin:0px; padding:0px; }
+html ul, ol, li { border:none; list-style:none; margin:0px; padding:0px; }
+html img { border:none; }
+html input { border:none; }
+html input:focus { -webkit-tap-highlight-color:rgba(0,0,0,0); -webkit-user-modify: read-write-plaintext-only; }
 
-div#header { background:url(../images/headerbackground.jpg) repeat-x; background-size:auto 100%; overflow:hidden; position:absolute; text-transform:capitalize; width:100%; }
-div#header h1 { color:rgba(0,0,0,0.5); margin:0px auto; text-align:center; text-transform:none; }
+.clear { clear:both; font-size:0px; height:0px; overflow:hidden; width:0px; }
+.template { display:none; }
+
+div#header { background:url(../images/headerbackground.jpg) repeat-x; background-size:auto 100%; overflow:hidden; position:absolute; text-transform:capitalize; width:100%; z-index:1; }
+div#header h1 { color:rgba(0,0,0,0.5); margin:0px auto; text-align:center; text-shadow:1px 1px #dddddd; text-transform:none; }
 div#header h1.template { display:none; }
-div#header input.button { background:red; border:none; margin:0px; padding:0px; position:absolute; top:0px; }
+div#header input.button { background:red; margin:0px; padding:0px; position:absolute; top:0px; }
 div#header div.search { background:#ffffff url(../images/search.png) no-repeat left center; background-size:auto 100%; position:absolute; top:0; }
-div#header div.search input.keywords { background:transparent; border:none; float:left; padding:0px; width:150px; }
+div#header div.search input.keywords { background:transparent; float:left; padding:0px; width:150px; }
 div#header div.search input.empty { color:#cccccc; text-transform:capitalize; }
-div#header div.search a.clear { background:url(../images/clear.png) no-repeat; background-size:100% 100%; display:none; float:left; }
+div#header div.search a.clear { background:url(../images/clear.png) no-repeat; background-size:100% 100%; clear:none; display:none; float:left; }
 div#header div.search.filled a.clear { display:block; }
 
-div#footer { background:url(../images/footerbackground.jpg) repeat-x; background-size:auto 100%; position:absolute; width:100%; }
+div#footer { background:url(../images/footerbackground.jpg) repeat-x; background-size:auto 100%; position:absolute; width:100%; z-index:1; }
 div#footer ul.menu { margin:0px auto; height:100%; }
 div#footer ul.menu>li { display:block; float:left; height:100%; }
 div#footer ul.menu>li a { color:rgba(255,255,255,0.75); display:block; height:100%; overflow:hidden; text-align:center; text-transform:capitalize; width:100%; }
 div#footer ul.menu>li a:hover { background:rgba(255,255,255,0.025); }
 div#footer ul.menu>li a.selected { background:rgba(255,255,255,0.1); }
+
+div#loading { background:#cbcbcb url(../images/loading-indicator.gif) no-repeat left center; background-size:auto 50%; font-weight:bold; position:absolute; text-shadow:1px 1px #dddddd; }
+
+div.partial { background:#cbcbcb; float:left; overflow-x:hidden; overflow-y:auto; }
+div.partial a.banner { float:left; overflow:hidden; }
+div.partial a.banner img { height:100%; width:100%; }
+div.partial ul.loop { float:left; overflow:hidden; }
+div.partial ul.loop a { display:block; float:left; height:100%; width:100%; }
+div.partial ul.loop img { height:100%; width:100%; }
+div.partial *.showcase { color:#222222; }
+div.partial *.showcase a { color:#222222; }
+div.partial h2.showcase { position:relative; text-shadow:1px 1px #dddddd; }
+div.partial h2.showcase a { font-weight:normal; }
+div.partial div.showcase { overflow:hidden; zoom:1; }
+div.partial div.showcase ul { overflow:hidden; text-shadow:1px 1px #cccccc; width:134000000px; zoom:1; }
+div.partial div.showcase li { float:left; overflow:hidden; zoom:1; }
+div.partial div.showcase div.item { background:#afafaf; border:solid 1px; border-color:#c1c1c1 #979797 #979797 #c1c1c1; float:left; }
+div.partial div.showcase div.item.alter { background:#bbbbbb; }
+div.partial div.showcase div.icon { background:#cccccc; float:left; overflow:hidden; }
+div.partial div.showcase div.icon img { border:none; float:left; height:100%; width:100%; }
+div.partial div.showcase div.icon span.type { background:#cccccc no-repeat center; background-size:auto 70%; display:block; float:left; }
+div.partial div.showcase div.icon span.video { background-image:url(../images/camera.png); }
+div.partial div.showcase div.icon span.audio { background-image:url(../images/sound.png); }
+div.partial div.showcase div.info { float:left; }
+div.partial div.showcase p.name { font-weight:bold; text-shadow:1px 1px #cccccc; }
+div.partial div.showcase p.text { color:#383838; }
+div.partial div.showcase p.star { background:url(../images/stars.png) no-repeat; background-size:auto 600%; }
+div.partial div.showcase a.price { background:url(../images/prizebackground.png) repeat-x; background-size:auto 100%; color:#ffffff; float:right; font-weight:bold; text-shadow:-1px -1px rgba(0,0,0,1); text-transform:uppercase; }
+div.partial p.showcase span { background:no-repeat left center; background-size:auto 70%; color:#383838; display:block; float:left; height:100%; }
+div.partial p.showcase span.video { background-image:url(../images/camera.png); }
+div.partial p.showcase span.audio { background-image:url(../images/sound.png); }
+div.partial ol.showcase { margin:0px auto; }
+div.partial ol.showcase li { background:#999999; float:left; }
+div.partial ol.showcase li.active { background-color:#333333; }

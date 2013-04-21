@@ -54,10 +54,16 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Css\Video.css" />
+    <Content Include="Images\camera.png" />
     <Content Include="Images\Clear.png" />
     <Content Include="Images\FooterBackground.jpg" />
     <Content Include="Images\HeaderBackground.jpg" />
+    <Content Include="Images\loading-indicator.gif" />
+    <Content Include="Images\movie.png" />
+    <Content Include="Images\PrizeBackground.png" />
     <Content Include="Images\Search.png" />
+    <Content Include="Images\sound.png" />
+    <Content Include="Images\Stars.png" />
     <Content Include="Index.html" />
     <Content Include="Images\logo.png" />
     <Content Include="Images\smalllogo.png" />
@@ -69,6 +75,7 @@
     <Content Include="Css\Index.css" />
     <Content Include="Js\jquery-1.8.2-win8-1.0.min.js" />
     <Content Include="Js\Controller\Index.js" />
+    <Content Include="Js\jquery.extensions.js" />
     <Content Include="Js\Service\Console.js" />
     <Content Include="Js\Service\Repository.js" />
     <Content Include="Player.html" />

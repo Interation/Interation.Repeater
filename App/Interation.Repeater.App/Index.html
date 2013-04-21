@@ -5,13 +5,58 @@
     <meta charset="utf-8" />
     <link href="css/index.css" rel="stylesheet" />
 </head>
-<body>
+<body class="loading">
     <div id="header" style="display:none;">
         <h1 class="template"></h1>
         <div class="search">
-            <input class="keywords" />
-            <a href="javascript:void(0);"></a>
+            <input class="keywords" for="search" type="search" />
+            <a class="clear" href="javascript:void(0);"></a>
         </div>
+    </div>
+
+    <div class="partial template">
+        <a class="banner" href="javascript:void(0);">
+            <img alt="" src="#" />
+        </a>
+        <ul class="loop">
+            <li>
+                <a href="javascript:void(0);">
+                    <img alt="" src="#" />
+                </a>
+            </li>
+        </ul>
+        <h2 class="showcase">
+            <span></span>
+            <a href="javascript:void(0);">See All &gt;</a>
+        </h2>
+        <div class="showcase">
+            <ul class="showcase">
+                <li>
+                    <div class="item">
+                        <div class="icon">
+                            <img alt="" src="#" />
+                            <span class="type"></span>
+                        </div>
+                        <div class="info">
+                            <p class="name">Name</p>
+                            <p class="text category"><span class="class">Class</span>: <span class="subclass">Sub-Class</span></p>
+                            <p class="text published">Published: <span>Time</span></p>
+                            <p class="star"></p>
+                        </div>
+                        <a class="price" href="javascript:void(0);">price</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <p class="showcase">
+            <span class="video">indicates this is a video</span>
+            <span class="audio">indicates this is a audio</span>
+        </p>
+        <ol class="showcase">
+            <li></li>
+            <li></li>
+            <li></li>
+        </ol>
     </div>
 
     <div id="footer" style="display:none;">
@@ -19,9 +64,14 @@
             <li><a href="javascript:void(0);"></a></li>
         </ul>
     </div>
+    
+    <div id="loading" style="display:none;">
+        Loading...
+    </div>
 
     <script src="js/cordova-2.5.0.js"></script>
     <script src="js/jquery-1.8.2-win8-1.0.min.js"></script>
+    <script src="js/jquery.extensions.js"></script>
     <script src="js/base/config.js"></script>
     <script src="js/service/repository.js"></script>
     <script src="js/service/console.js"></script>

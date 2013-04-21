@@ -1,13 +1,17 @@
 ﻿var config =
 {
     volume: 1,
-    language: (function () { return navigator.systemLanguage.toLowerCase(); })(),
+    language: (function ()
+    {
+        try { return navigator.systemLanguage.toLowerCase(); }
+        catch (e) { return "en-us"; }
+    })(),
     database: { name: "Repeater", version: 13 }
 };
 
 config.urls =
 {
-    partial: ""
+    partial: "http://192.168.1.2/api/partial"
 };
 
 config.menus =

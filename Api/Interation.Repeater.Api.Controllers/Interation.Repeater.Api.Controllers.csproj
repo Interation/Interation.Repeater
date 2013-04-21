@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AE625B31-AEE5-4512-8714-3165F1B19008}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Interation.Repeater.Api.Controllers</RootNamespace>
+    <AssemblyName>Interation.Repeater.Api.Controllers</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions\ProductContractExtension.cs" />
+    <Compile Include="Extensions\TopicContractExtension.cs" />
+    <Compile Include="HomeController.cs" />
+    <Compile Include="PartialController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Interation.Repeater.Core\Interation.Repeater.Core.csproj">
+      <Project>{a5153b81-65fb-44b0-9a88-0e37149576d0}</Project>
+      <Name>Interation.Repeater.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Service\Interation.Repeater.Service.Contract\Interation.Repeater.Service.Contract.csproj">
+      <Project>{65799bbb-b8c1-4a13-bc0b-60f57f635409}</Project>
+      <Name>Interation.Repeater.Service.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Service\Interation.Repeater.Service.IServiceProvider\Interation.Repeater.Service.IServiceProvider.csproj">
+      <Project>{f01d8960-55b2-475c-b294-c8e3a2df9d83}</Project>
+      <Name>Interation.Repeater.Service.IServiceProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interation.Repeater.Api.ViewModel\Interation.Repeater.Api.ViewModel.csproj">
+      <Project>{09a89558-cf67-490c-b1cd-a8209a131f68}</Project>
+      <Name>Interation.Repeater.Api.ViewModel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
