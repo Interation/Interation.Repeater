@@ -37,5 +37,10 @@ namespace Interation.Repeater.Api.Controllers
         {
             return Json(new { }, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult Newest(string version)
+        {
+            return Json(new { }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

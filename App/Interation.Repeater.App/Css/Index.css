@@ -16,9 +16,9 @@ html input:focus { -webkit-tap-highlight-color:rgba(0,0,0,0); -webkit-user-modif
 .template { display:none; }
 
 div#header { background:url(../images/headerbackground.jpg) repeat-x; background-size:auto 100%; overflow:hidden; position:absolute; text-transform:capitalize; width:100%; z-index:1; }
-div#header h1 { color:rgba(0,0,0,0.5); margin:0px auto; text-align:center; text-shadow:1px 1px #dddddd; text-transform:none; }
+div#header h1 { color:rgba(0,0,0,0.5); text-align:center; text-shadow:1px 1px #dddddd; text-transform:none; }
 div#header h1.template { display:none; }
-div#header input.button { background:red; margin:0px; padding:0px; position:absolute; top:0px; }
+div#header a.button { background:red; display:block; margin:0px; padding:0px; position:absolute; top:0px; }
 div#header div.search { background:#ffffff url(../images/search.png) no-repeat left center; background-size:auto 100%; position:absolute; top:0; }
 div#header div.search input.keywords { background:transparent; float:left; padding:0px; width:150px; }
 div#header div.search input.empty { color:#cccccc; text-transform:capitalize; }
@@ -43,7 +43,6 @@ div.partial ul.loop img { height:100%; width:100%; }
 div.partial *.showcase { color:#222222; }
 div.partial *.showcase a { color:#222222; }
 div.partial h2.showcase { position:relative; text-shadow:1px 1px #dddddd; }
-div.partial h2.showcase a { font-weight:normal; }
 div.partial div.showcase { overflow:hidden; zoom:1; }
 div.partial div.showcase ul { overflow:hidden; text-shadow:1px 1px #cccccc; width:134000000px; zoom:1; }
 div.partial div.showcase li { float:left; overflow:hidden; zoom:1; }

@@ -42,7 +42,7 @@
             {
                 var month = date.getMonth();
                 var shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                var longMonths = ["January", "February", "March", "April", "May", "June","July","August", "September", "October", "November", "December"];
+                var longMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
                 format = format.replace(RegExp.$1, RegExp.$1.length == 3 ? shortMonths[month] : longMonths[month]);
             }
@@ -57,7 +57,7 @@
 
             return format;
         },
-        resolveDate: function(str)
+        resolveDate: function (str)
         {
             if (match = str.match(/Date\((\d+)\)/))
             {
@@ -109,6 +109,76 @@
             this.focus(function () { if ($(this).hasClass("empty")) { $(this).removeClass("empty").val(""); } });
             this.blur(function () { if ($(this).val().length == 0) { $(this).addClass("empty").val(text); } }).blur();
             return this;
+        },
+        climb: function (options)
+        {
+            //var options = {
+            //    css: "margin-left",
+            //    x0: 0,
+            //    x1: 100,
+            //    s0: 20,
+            //    v0: 2,
+            //    complete: function ()
+            //    {
+            //    }
+            //};
+
+            var $this = $(this);
+            var x1 = Math.min(options.x1, options.x2);
+            var x2 = Math.max(options.x1, options.x2);
+            var s0 = isNaN(options.s0) ? parseInt($this.css(options.css)) : options.s0;
+            var v0 = options.v0;
+            var t0 = Date.now();
+            var g = 10;
+
+            var yx = function (x) { return -(x - x1) * (x - x2) };                      // hill model
+            var dyx = function (x) { return -2 * x + x1 + x2; };                        // first derivative of yx
+            var acme = (function (m) { return { x: m, y: yx(m) }; })(0.5 * (x1 + x2));  // max point
+            var a0 = -g * Math.sin(Math.atan(dyx(s0)));                                 // acceleration at begining
+            var aoa = 1;                                                        // acceleration of acceleration
+
+            var complete = function (v)
+            {
+                if (typeof options.complete == "function")
+                {
+                    options.complete(v);
+                }
+            };
+
+            if (x1 == x2)
+            {
+                $this.css(options.css, x1);
+                return;
+            }
+
+            var timer = setInterval(function ()
+            {
+                try
+                {
+                    var t = Date.now() - t0;
+                    //var s = s0 + v0 * t + 0.5 * a0 * t * t + aoa * Math.pow(t, 3) / 6;
+                    var s = s0 + v0 * t;
+
+                    if (s <= x1)
+                    {
+                        s = x1;
+                        complete(-1);
+                        clearInterval(timer);
+                    }
+                    else if (x2 <= s)
+                    {
+                        s = x2;
+                        complete(1);
+                        clearInterval(timer);
+                    }
+
+                    $this.css(options.css, s);
+                }
+                catch (e)
+                {
+                    clearInterval(timer);
+                }
+            }, 5);
         },
         dampen: function (cssKey, options)
         {

@@ -56,7 +56,7 @@
             else if (sender.hasClass("showcase"))
             {
                 var max = 0;
-                var min = $(window).width() * (1 - sender.children().length);
+                var min = (function (li) { return li.width() * (1 - li.length); })(sender.children());
 
                 this._touchInfo.showcase =
                 {
@@ -85,6 +85,15 @@
                 {
                     this._touchInfo.vertical = yy > xx;
                 }
+            }
+
+            if (this._footPrint != undefined)
+            {
+                this._footPrint = [this._footPrint[1], { t: Date.now(), x: event.pageX, y: event.pageY }];
+            }
+            else
+            {
+                this._footPrint = [{ t: start.time, x: start.pageX, y: start.pageY }, { t: Date.now(), x: event.pageX, y: event.pageY }];
             }
 
             if (this._touchInfo.partial != undefined)
@@ -124,7 +133,7 @@
                 return;
             }
 
-            if (this._touchInfo.partial != undefined)
+            if (this._touchInfo.partial != undefined && this._touchInfo.vertical === true)
             {
                 var _info = this._touchInfo.partial;
                 var _sender = _info.sender;
@@ -132,6 +141,32 @@
 
                 if (marginTop < _info.minMarginTop) { _sender.animate({ marginTop: _info.minMarginTop }); }
                 else if (marginTop > _info.maxMarginTop) { _sender.animate({ marginTop: _info.maxMarginTop }); }
+            }
+
+            if (this._touchInfo.showcase != undefined && this._touchInfo.vertical === false)
+            {
+                var _info = this._touchInfo.showcase;
+                var _sender = _info.sender;
+                var s0 = _sender.i("margin-left");
+                var dt = this._footPrint[1].t - this._footPrint[0].t;
+                var v0 = dt == 0 ? 0 : (this._footPrint[1].x - this._footPrint[0].x) / dt;
+                var unit = sender.children().width();
+                var index = s0 / unit;
+
+                _sender.climb({
+                    css: "margin-left",
+                    x1: Math.floor(index) * unit,
+                    x2: Math.ceil(index) * unit,
+                    s0: s0,
+                    v0: v0,
+                    complete: function (v)
+                    {
+                        var parent = _sender.parents("div.showcase");
+                        var category = parent.attr("category");
+                        var i = v < 0 ? Math.floor(1 - index) : Math.ceil(-1 - index);
+                        parent.parent().children("ol[category='" + category + "']").children().removeClass("active").eq(i).addClass("active");
+                    }
+                });
             }
 
             this._touchInfo = null;
@@ -165,35 +200,64 @@
         },
         _loadPartial: function (name)
         {
-            var options =
-            {
-                url: config.urls.partial.replace(/(\/*)$/, "/") + name,
-                cache: false,
-                success: function (json)
-                {
-                    if (loadingIndex == _this._loadingIndex)
-                    {
-                        _this._generatePartial(name, json);
-                    }
-
-                    body.removeClass("loading");
-                },
-                error: function (response)
-                {
-                    alert("Cannot connect to iRepeater Store");
-                },
-                complete: function ()
-                {
-                    loading.hide();
-                }
-            };
-
             var _this = this;
-            var loading = $("div#loading").show();
+            var indexed = $("div.partial[index]");
             var body = $(document.body).addClass("loading");
-            var loadingIndex = this._loadingIndex = (this._loadingIndex || -1) + 1;
 
-            $.ajax(options);
+            var ajaxLoading = function ()
+            {
+                var options =
+                {
+                    url: config.urls.partial.replace(/(\/*)$/, "/") + name,
+                    cache: false,
+                    success: function (json)
+                    {
+                        if (loadingIndex == _this._loadingIndex)
+                        {
+                            _this._generatePartial(name, json);
+                        }
+
+                        body.removeClass("loading");
+                    },
+                    error: function (response)
+                    {
+                        alert("Cannot connect to iRepeater Store");
+                    },
+                    complete: function ()
+                    {
+                        loading.hide();
+                    }
+                };
+
+                var loading = $("div#loading").show();
+                var loadingIndex = _this._loadingIndex = (_this._loadingIndex || -1) + 1;
+
+                $.ajax(options);
+            };
+            
+            if (indexed.length > 0)
+            {
+                var duration = 1000;
+                var header = $("div#header");
+                var h1 = header.find("h1:visible");
+                var button = header.find("a.button:visible");
+                var h1New = header.find("h1.template").clone().removeClass("template").text(name);
+                var buttonNew = header.find("a.template").clone().removeClass("template");
+                var h1MarginLeft = h1New.i("margin-left");
+                var buttonMarginLeft = buttonNew.i("margin-left");
+
+                h1New.css({ marginLeft: $(window).width() - h1New.r("width", 0.5), opacity: 0 }).appendTo(header);
+
+                h1.animate({ marginLeft: -h1.r("width", 0.5), opacity: 0 }, duration, function () { $(this).remove(); });
+                button.animate({ marginLeft: -0.5 * ($(window).width()) }, duration, function () { $(this).remove() });
+                h1New.animate({ marginLeft: h1MarginLeft, opacity: 1 });
+
+                indexed.filter(":visible").animate({ marginLeft: -$(window).width() }, duration, ajaxLoading);
+            }
+            else
+            {
+                ajaxLoading();
+            }
         },
         _resizePage: function (width, height)
         {
@@ -215,11 +279,13 @@
         _resizeHeader: function (header, width, height)
         {
             var h1 = header.children("h1");
+            var button = header.children("a.button");
             var search = header.children("div.search");
             var keywords = search.children("input.keywords");
             var searchClear = search.children("a.clear");
 
-            h1.css({ fontSize: i(height * 0.42), height: height, lineHeight: height + "px", width: i(width * 0.5) });
+            h1.css({ fontSize: i(height * 0.42), height: height, lineHeight: height + "px", width: i(width * 0.5) }).css({ marginLeft: i(0.5 * (width - h1.width())) });
+            button.css({ fontSize: i(height * 0.28), height: i(height * 0.7), marginLeft: r(width * 0.016), padding: "0px " + i(height * 0.4) + "px" }).css({ lineHeight: button.css("height"), marginTop: r(0.5 * (height - button.height())) });
             search.css({ height: i(height * 0.33) * 2, right: i(width * 0.013), width: i(width * 0.2) });
             search.css({ borderRadius: search.height(), marginTop: r(0.5 * (height - search.height())), boxShadow: this._getShadow(height * 0.05, height * 0.05, height * 0.05, "rgba(0,0,0,0.5)", true) });
             keywords.css({ fontSize: i(search.height() * 0.5), marginLeft: search.height(), marginTop: i(search.height() * 0.15) }).css({ height: search.height() - 2 * keywords.i("margin-top") });
@@ -266,6 +332,7 @@
             var head = showcase.filter("h2");
             var headSpan = head.children("span");
             var headAnchor = head.children("a");
+            var headLabel = head.children("label");
             var desc = showcase.filter("p");
             var descSpan = desc.children("span");
             var div = showcase.filter("div");
@@ -288,6 +355,7 @@
             head.css({ fontSize: i(width * 0.014), lineHeight: i(width * 0.05) + "px", marginTop: i(width * 0.02) });
             headSpan.css({ fontSize: i(width * 0.017), marginLeft: margin });
             headAnchor.css({ marginLeft: margin });
+            headLabel.css({ marginLeft: margin });
             div.css({ width: width });
             pages.attr({ autoWidth: Math.round(width - grid.width * 2 - 6) });
             pageList.css({ width: width });
@@ -329,7 +397,7 @@
             this._loadPartial(options.name);
         },
         _generatePartial: function (name, json)
-        {                                                           
+        {
             $("div.partial." + name).remove();
 
             var _this = this;
@@ -344,20 +412,9 @@
             {
                 case "featured":
                     this._generateBanner(target, template, json.Topics);
-                    this._generateShowcase(target, template, json.Newest, 6);
-                    this._generateShowcase(target, template, json.Hottest, 6);
+                    this._generateShowcase(target, template, json.Newest, 6, "newest", true);
+                    this._generateShowcase(target, template, json.Hottest, 6, "hottest", true);
                     break;
-            }
-
-            if (indexed.length > 0)
-            {
-                var width = $(window).width();
-                var visible = indexed.filter(":visible");
-
-                target.css({ marginLeft: $(window).width() }).animate({ marginLeft: 0 },
-                {
-                    each: function (value) { visible.animate({ marginLeft: value - width }); }
-                });
             }
 
             target.bind("mousedown", function (event) { _this._touchStart($(this), event); })
@@ -399,18 +456,18 @@
 
             animate();
         },
-        _generateShowcase: function (target, template, json, pageSize)
+        _generateShowcase: function (target, template, json, pageSize, category, light)
         {
             var _this = this;
 
-            var head = template.find("h2.showcase").clone();
-            var div = template.find("div.showcase").clone();
+            var head = template.find("h2.showcase").clone().attr({ category: category });
+            var div = template.find("div.showcase").clone().attr({ category: category });
+            var desc = template.find("p.showcase").clone().attr({ category: category });
+            var navs = null, navItem = null;
+
             var pages = div.children("ul");
             var pageItem = pages.children("li:first").clone();
             var productItem = pageItem.children("div.item:first").clone();
-            var desc = template.find("p.showcase").clone();
-            var navs = template.find("ol.showcase").clone();
-            var navItem = navs.children("li:first").clone();
 
             var pageCount = Math.ceil(json.Products.length / pageSize);
             var autoWidth = i(pages.attr("autoWidth"));
@@ -420,7 +477,21 @@
             pages.empty().appendTo(div);
             pageItem.empty();
             desc.appendTo(target);
-            navs.empty().appendTo(target).css({ width: pageCount * i(navs.attr("unitWidth")) });
+
+            if (light)
+            {
+                var navs = template.find("ol.showcase").clone().attr({ category: category });
+                var navItem = navs.children("li:first").clone();
+                navs.empty().appendTo(target).css({ width: pageCount * i(navs.attr("unitWidth")) });
+                head.find("a").click(function () { _this._loadPartial(category); });
+                head.find("label").remove();
+            }
+            else
+            {
+                var to = json.Products.length > pageSize ? pageSize : json.Products.length;
+                head.find("label").text("1-" + to + " of " + json.Products.length);
+                head.find("a").remove();
+            }
 
             pages.bind("mousedown", function (event) { _this._touchStart($(this), event); })
                  .bind("touchstart", function (event) { _this._touchStart($(this), event.originalEvent.touches[0]); });
@@ -428,7 +499,11 @@
             for (var c = 0; c < pageCount; c++)
             {
                 var page = pageItem.clone().attr({ index: c }).appendTo(pages);
-                var nav = navItem.clone().appendTo(navs).addClass(c == 0 ? "active" : null);
+
+                if (navs != null && navItem != null)
+                {
+                    navItem.clone().appendTo(navs).addClass(c == 0 ? "active" : null);
+                }
 
                 for (var j = 0; j < pageSize; j++)
                 {
