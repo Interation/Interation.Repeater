@@ -11,7 +11,7 @@
         {
             var _this = this;
 
-            this._generateMenu(config.menus);
+            this._generateMenu(config.partials);
             this._resizePage($(window).width(), $(window).height());
 
 
@@ -27,6 +27,7 @@
                                           .keypress(function (event) { _this._keypress($(this), event); })
                                           .bind("propertychange input", function (event) { _this._change($(this), event); });
 
+            $("div#header a.back").live("click", function () { _this._back(); });
             $("div#header div.search a.clear").click(function () { _this._clearKeywords(); });
             $("div#footer ul.menu a:first").click();
         },
@@ -190,11 +191,56 @@
                     break;
             }
         },
-        _search: function(keywords)
+        _search: function (keywords)
         {
             alert(keywords);
         },
-        _clearKeywords: function()
+        _back: function ()
+        {
+            var _this = this;
+            var indexed = $("div.partial[index]");
+            var visible = indexed.filter(":visible");
+            var index = i(visible.attr("index"));
+            var previous = indexed.filter("[index=" + (index - 1) + "]").show();
+            var previousName = previous.attr("name");
+            var width = $(window).width();
+            var body = $(document.body).addClass("loading");
+            var header = $("div#header");
+            var h1 = header.children("h1:visible");
+            var back = header.children("a.back:visible");
+            var h1New = header.children("h1.template").clone().removeClass("template").text(config.partials[previousName].title);
+            var backNew = header.children("a.back.template").clone().removeClass("template").text(h1.text());
+            var h1MarginLeft = h1New.i("margin-left");
+            var backMarginLeft = backNew.i("margin-left");
+            var duration = 5000;
+
+            h1.animate({ marginLeft: $(window).width() - h1New.r("width", 0.5), opacity: 0 }, duration, function () { $(this).remove(); });
+            back.animate({ marginLeft: i(0.5 * ($(window).width() - backNew.outerWidth())), opacity: 0 }, duration, function () { $(this).remove(); });
+            h1New.css({ opacity: 0 }).prependTo(header).css({ marginLeft: -h1.r("width", 0.5) - backMarginLeft }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
+
+            if (index >= 2)
+            {
+                backNew.css({ opacity: 0 }).prependTo(header).css({ marginLeft: -0.5 * ($(window).width()) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
+            }
+
+
+            visible.animate({ width: 0 },
+            {
+                duration: duration,
+                step: function (current)
+                {
+                    $(this).css({ marginLeft: width - current });
+                    previous.css({ marginLeft: -current });
+                },
+                complete: function ()
+                {
+                    $(this).remove();
+                    body.removeClass("loading");
+                    previous.css({ marginLeft: 0 }).show();
+                }
+            });
+        },
+        _clearKeywords: function ()
         {
             $("input.keywords").val("").blur().parent().removeClass("filled");
         },
@@ -202,62 +248,80 @@
         {
             var _this = this;
             var indexed = $("div.partial[index]");
+            var header = $("div#header");
+            var h1 = header.children("h1:visible");
+            var back = header.children("a.back:visible");
+            var h1New = header.children("h1.template").clone().removeClass("template").text(config.partials[name].title);
+            var backNew = header.children("a.back.template").clone().removeClass("template").text(h1.text());
             var body = $(document.body).addClass("loading");
+            var loading = $("div#loading").hide();
+            var loadingIndex = this._loadingIndex = (this._loadingIndex == undefined ? 0 : ++this._loadingIndex);
 
-            var ajaxLoading = function ()
+            var complete = function (json)
             {
-                var options =
+                if (loadingIndex == _this._loadingIndex)
                 {
-                    url: config.urls.partial.replace(/(\/*)$/, "/") + name,
-                    cache: false,
-                    success: function (json)
-                    {
-                        if (loadingIndex == _this._loadingIndex)
-                        {
-                            _this._generatePartial(name, json);
-                        }
+                    loading.hide();
 
+                    if (json != undefined)
+                    {
+                        _this._generatePartial(name, json);
                         body.removeClass("loading");
-                    },
-                    error: function (response)
-                    {
-                        alert("Cannot connect to iRepeater Store");
-                    },
-                    complete: function ()
-                    {
-                        loading.hide();
                     }
-                };
+                }
+            }
 
-                var loading = $("div#loading").show();
-                var loadingIndex = _this._loadingIndex = (_this._loadingIndex || -1) + 1;
-
-                $.ajax(options);
-            };
-            
             if (indexed.length > 0)
             {
-                var duration = 1000;
-                var header = $("div#header");
-                var h1 = header.find("h1:visible");
-                var button = header.find("a.button:visible");
-                var h1New = header.find("h1.template").clone().removeClass("template").text(name);
-                var buttonNew = header.find("a.template").clone().removeClass("template");
+                var duration = 5000;
                 var h1MarginLeft = h1New.i("margin-left");
-                var buttonMarginLeft = buttonNew.i("margin-left");
+                var backMarginLeft = backNew.i("margin-left");
 
-                h1New.css({ marginLeft: $(window).width() - h1New.r("width", 0.5), opacity: 0 }).appendTo(header);
+                h1New.css({ opacity: 0 }).prependTo(header).css({ marginLeft: $(window).width() - h1New.r("width", 0.5) }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
+                backNew.css({ opacity: 0 }).prependTo(header).css({ marginLeft: i(0.5 * ($(window).width() - backNew.outerWidth())) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
+                h1.animate({ marginLeft: -h1.r("width", 0.5) - backMarginLeft, opacity: 0 }, duration, function () { $(this).remove(); });
+                back.animate({ marginLeft: -0.5 * ($(window).width()) }, duration, function () { $(this).remove(); });
 
-                h1.animate({ marginLeft: -h1.r("width", 0.5), opacity: 0 }, duration, function () { $(this).remove(); });
-                button.animate({ marginLeft: -0.5 * ($(window).width()) }, duration, function () { $(this).remove() });
-                h1New.animate({ marginLeft: h1MarginLeft, opacity: 1 });
-
-                indexed.filter(":visible").animate({ marginLeft: -$(window).width() }, duration, ajaxLoading);
+                indexed.filter(":visible").animate({ marginLeft: -$(window).width() }, duration, function ()
+                {
+                    if (loadingIndex == _this._loadingIndex)
+                    {
+                        $(this).hide();
+                        loading.show();
+                        _this._loadingPartial(name, complete);
+                    }
+                });
             }
             else
             {
-                ajaxLoading();
+                h1.remove();
+                back.remove();
+                h1New.appendTo(header);
+                loading.show();
+                this._loadingPartial(name, complete);
             }
+        },
+        _loadingPartial: function (name, callback)
+        {
+            var options =
+            {
+                url: config.urls.partial.replace(/(\/*)$/, "/") + name,
+                cache: false,
+                success: function (json)
+                {
+                    if (typeof callback == "function") { callback(json); }
+                },
+                error: function (response)
+                {
+                    alert("Cannot connect to iRepeater Store");
+                },
+                complete: function ()
+                {
+                    if (typeof callback == "function") { callback(); }
+                }
+            };
+
+            $.ajax(options);
         },
         _resizePage: function (width, height)
         {
@@ -270,7 +334,7 @@
             footer.css({ height: i(width * 0.050), width: width }).css({ top: height - footer.height() });
             loading.css({ fontSize: i(width * 0.0125) }).css({ borderRadius: loading.i("font-size", 0.5), padding: loading.i("font-size"), paddingLeft: loading.i("font-size", 3), width: loading.width() });
             loading.css({ "background-position-x": loading.i("font-size", 0.55), height: loading.i("font-size", 1.5) }).css({ lineHeight: loading.css("height"), left: i((width - loading.outerWidth()) * 0.5), top: i((height - loading.outerHeight()) * 0.5) });
-            partial.css({ marginBottom: footer.height(), marginTop: header.height(), width: width });
+            partial.css({ marginBottom: footer.height(), marginTop: header.height(), top: 0, width: width });
 
             this._resizeHeader(header, header.width(), header.height()).show();
             this._resizeFooter(footer, footer.width(), footer.height()).show();
@@ -279,13 +343,13 @@
         _resizeHeader: function (header, width, height)
         {
             var h1 = header.children("h1");
-            var button = header.children("a.button");
+            var back = header.children("a.back");
             var search = header.children("div.search");
             var keywords = search.children("input.keywords");
             var searchClear = search.children("a.clear");
 
-            h1.css({ fontSize: i(height * 0.42), height: height, lineHeight: height + "px", width: i(width * 0.5) }).css({ marginLeft: i(0.5 * (width - h1.width())) });
-            button.css({ fontSize: i(height * 0.28), height: i(height * 0.7), marginLeft: r(width * 0.016), padding: "0px " + i(height * 0.4) + "px" }).css({ lineHeight: button.css("height"), marginTop: r(0.5 * (height - button.height())) });
+            h1.css({ fontSize: i(height * 0.42), height: height, lineHeight: height + "px", width: i(width * 0.25) }).css({ marginLeft: i(0.5 * (width - h1.width())) });
+            back.css({ fontSize: i(height * 0.28), height: i(height * 0.7), marginLeft: r(width * 0.016), padding: "0px " + i(height * 0.4) + "px" }).css({ lineHeight: back.css("height"), marginTop: r(0.5 * (height - back.height())) });
             search.css({ height: i(height * 0.33) * 2, right: i(width * 0.013), width: i(width * 0.2) });
             search.css({ borderRadius: search.height(), marginTop: r(0.5 * (height - search.height())), boxShadow: this._getShadow(height * 0.05, height * 0.05, height * 0.05, "rgba(0,0,0,0.5)", true) });
             keywords.css({ fontSize: i(search.height() * 0.5), marginLeft: search.height(), marginTop: i(search.height() * 0.15) }).css({ height: search.height() - 2 * keywords.i("margin-top") });
@@ -324,7 +388,7 @@
             banner.css({ "border-bottom-left-radius": radius, "border-top-left-radius": radius, height: 3 * grid.height, marginLeft: margin, marginTop: margin, width: 3 * grid.width });
             loop.css({ "border-bottom-right-radius": radius, "border-top-right-radius": radius, height: 3 * grid.height, marginRight: margin, marginTop: margin, width: grid.width });
             loopList.css({ height: grid.height, width: "100%" });
-            
+
             this._resizeShowcase(showcase, width, margin);
         },
         _resizeShowcase: function (showcase, width, margin)
@@ -352,7 +416,7 @@
             var grid = { width: i(width / 3) - 2, height: i(width * 0.1) };
 
             head.css({ boxShadow: this._getShadow(0, width * 0.003, width * 0.003, "rgba(0,0,0,0.3)") });
-            head.css({ fontSize: i(width * 0.014), lineHeight: i(width * 0.05) + "px", marginTop: i(width * 0.02) });
+            head.css({ fontSize: i(width * 0.014), lineHeight: i(width * 0.05) + "px", marginTop: i(width * 0.02), width: width });
             headSpan.css({ fontSize: i(width * 0.017), marginLeft: margin });
             headAnchor.css({ marginLeft: margin });
             headLabel.css({ marginLeft: margin });
@@ -385,16 +449,12 @@
             sender.parents("ul.menu").find("a").removeClass("selected");
             sender.addClass("selected");
 
-            var header = $("div#header");
-            var h1 = header.children("h1");
-            var search = header.children("div.search");
+            $(document.body).addClass("loading");
+            $("div.partial[index]").remove();
+            $("div#header>div.search").css({ display: options.searchable ? "block" : "none" });
 
-            h1.filter(":visible").remove();
-            h1.filter(".template").clone().removeClass("template").text(options.h1).appendTo(header);
-            search.css({ display: options.search ? "block" : "none" });
-
-            $("div.partial:visible").remove();
-            this._loadPartial(options.name);
+            var _this = this;
+            setTimeout(function () { _this._loadPartial(options.name); });
         },
         _generatePartial: function (name, json)
         {
@@ -405,7 +465,7 @@
             var template = $("div.partial.template");
             var target = $("<div></div>").addClass("partial " + name);
 
-            target.attr({ index: indexed.length, style: template.attr("style") });
+            target.attr({ index: indexed.length, name: name, style: template.attr("style") });
             target.appendTo(document.body);
 
             switch (name)
@@ -414,6 +474,9 @@
                     this._generateBanner(target, template, json.Topics);
                     this._generateShowcase(target, template, json.Newest, 6, "newest", true);
                     this._generateShowcase(target, template, json.Hottest, 6, "hottest", true);
+                    break;
+                case "newest":
+                    this._generateShowcase(target, template, json, 12, "newest");
                     break;
             }
 
@@ -456,7 +519,7 @@
 
             animate();
         },
-        _generateShowcase: function (target, template, json, pageSize, category, light)
+        _generateShowcase: function (target, template, array, pageSize, category, light)
         {
             var _this = this;
 
@@ -469,10 +532,10 @@
             var pageItem = pages.children("li:first").clone();
             var productItem = pageItem.children("div.item:first").clone();
 
-            var pageCount = Math.ceil(json.Products.length / pageSize);
+            var pageCount = Math.ceil(array.length / pageSize);
             var autoWidth = i(pages.attr("autoWidth"));
 
-            head.appendTo(target).find("span").text(json.Title + " ");
+            head.appendTo(target).find("span").text(config.partials[category].title + " ");
             div.appendTo(target);
             pages.empty().appendTo(div);
             pageItem.empty();
@@ -488,8 +551,8 @@
             }
             else
             {
-                var to = json.Products.length > pageSize ? pageSize : json.Products.length;
-                head.find("label").text("1-" + to + " of " + json.Products.length);
+                var to = array.length > pageSize ? pageSize : array.length;
+                head.find("label").text("1-" + to + " of " + array.length);
                 head.find("a").remove();
             }
 
@@ -508,10 +571,10 @@
                 for (var j = 0; j < pageSize; j++)
                 {
                     var index = c * pageSize + j;
-                    var product = json.Products[index];
+                    var product = array[index];
                     var item = productItem.clone();
 
-                    if (index >= json.Products.length) { break; }
+                    if (index >= array.length) { break; }
 
                     item.find("div.icon>img").attr({ src: product.IconUrl });
                     item.find("div.icon>span.type").addClass(product.Visual ? "video" : "audio");
@@ -529,11 +592,11 @@
                 }
             }
         },
-        _generateClear: function(tagName)
+        _generateClear: function (tagName)
         {
             return $(document.createElement(tagName)).addClass("clear");
         },
-        _generateMenu: function (menus)
+        _generateMenu: function (partials)
         {
             var _this = this;
             var container = $("div#footer ul.menu");
@@ -541,10 +604,16 @@
 
             container.empty();
 
-            $.each(menus, function (i, menu)
+            $.each(partials, function (name, partial)
             {
+                if (partial.menu != undefined)
+                {
+                    var text = partial.menu.text;
+                    var options = { name: name, searchable: partial.searchable };
+                    var anchor = template.clone().appendTo(container).children("a");
 
-                template.clone().appendTo(container).children("a").text(menu.text).click(function () { _this._selectMenu($(this), menu); });
+                    anchor.text(text).click(function () { _this._selectMenu($(this), options); });
+                }
             });
         }
     };

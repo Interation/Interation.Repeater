@@ -17,14 +17,24 @@ namespace Interation.Repeater.Service.ServiceImplementation
 
         public List<ProductContract> GetNewest()
         {
-            var products = _productRepository.GetNewest();
+            return GetNewest(0);
+        }
+
+        public List<ProductContract> GetNewest(int count)
+        {
+            var products = _productRepository.GetNewest(count);
             if (products == null) { return null; }
             return products.ConvertAll(refer => refer.ToContract());
         }
 
         public List<ProductContract> GetHottest()
         {
-            var products = _productRepository.GetHottest();
+            return GetHottest(0);
+        }
+
+        public List<ProductContract> GetHottest(int count)
+        {
+            var products = _productRepository.GetHottest(count);
             if (products == null) { return null; }
             return products.ConvertAll(refer => refer.ToContract());
         }

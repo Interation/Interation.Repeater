@@ -8,19 +8,23 @@ namespace Interation.Repeater.Repository.RepositoryImplementation
 {
     public class ProductRepository : IProductRepository
     {
-        public List<Product> GetNewest()
+        public List<Product> GetNewest(int count)
         {
             using (var db = new RepeaterDbContext())
             {
-                return db.Proc_SelectNewestProducts().ToList();
+                var result = db.Proc_SelectNewestProducts();
+                if (count == 0) { return result.ToList(); }
+                return result.Take(count).ToList();
             }
         }
 
-        public List<Product> GetHottest()
+        public List<Product> GetHottest(int count)
         {
             using (var db = new RepeaterDbContext())
             {
-                return db.Proc_SelectHottestProducts().ToList();
+                var result = db.Proc_SelectHottestProducts();
+                if (count == 0) { return result.ToList(); }
+                return result.Take(count).ToList();
             }
         }
     }

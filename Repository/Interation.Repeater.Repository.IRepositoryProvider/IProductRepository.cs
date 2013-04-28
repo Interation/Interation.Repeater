@@ -5,7 +5,7 @@ namespace Interation.Repeater.Repository.IRepositoryProvider
 {
     public interface IProductRepository
     {
-        List<Product> GetNewest();
-        List<Product> GetHottest();
+        List<Product> GetNewest(int count);
+        List<Product> GetHottest(int count);
     }
 }

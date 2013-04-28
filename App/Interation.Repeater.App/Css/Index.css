@@ -13,12 +13,12 @@ html input { border:none; }
 html input:focus { -webkit-tap-highlight-color:rgba(0,0,0,0); -webkit-user-modify: read-write-plaintext-only; }
 
 .clear { clear:both; font-size:0px; height:0px; overflow:hidden; width:0px; }
-.template { display:none; }
 
 div#header { background:url(../images/headerbackground.jpg) repeat-x; background-size:auto 100%; overflow:hidden; position:absolute; text-transform:capitalize; width:100%; z-index:1; }
-div#header h1 { color:rgba(0,0,0,0.5); text-align:center; text-shadow:1px 1px #dddddd; text-transform:none; }
+div#header h1 { color:rgba(0,0,0,0.5); float:left; position:absolute; text-align:center; text-shadow:1px 1px #dddddd; text-transform:none; top:0px; }
 div#header h1.template { display:none; }
-div#header a.button { background:red; display:block; margin:0px; padding:0px; position:absolute; top:0px; }
+div#header a.back { background:red; display:block; margin:0px; padding:0px; position:absolute; top:0px; }
+div#header a.back.template { display:none; }
 div#header div.search { background:#ffffff url(../images/search.png) no-repeat left center; background-size:auto 100%; position:absolute; top:0; }
 div#header div.search input.keywords { background:transparent; float:left; padding:0px; width:150px; }
 div#header div.search input.empty { color:#cccccc; text-transform:capitalize; }
@@ -34,7 +34,7 @@ div#footer ul.menu>li a.selected { background:rgba(255,255,255,0.1); }
 
 div#loading { background:#cbcbcb url(../images/loading-indicator.gif) no-repeat left center; background-size:auto 50%; font-weight:bold; position:absolute; text-shadow:1px 1px #dddddd; }
 
-div.partial { background:#cbcbcb; float:left; overflow-x:hidden; overflow-y:auto; }
+div.partial { background:#cbcbcb; float:left; overflow-x:hidden; overflow-y:auto; position:absolute; }
 div.partial a.banner { float:left; overflow:hidden; }
 div.partial a.banner img { height:100%; width:100%; }
 div.partial ul.loop { float:left; overflow:hidden; }
@@ -64,3 +64,4 @@ div.partial p.showcase span.audio { background-image:url(../images/sound.png); }
 div.partial ol.showcase { margin:0px auto; }
 div.partial ol.showcase li { background:#999999; float:left; }
 div.partial ol.showcase li.active { background-color:#333333; }
+div.partial.template { display:none; }

@@ -1,30 +1,39 @@
 ﻿var config =
 {
-    volume: 1,
-    language: (function ()
+    volumn: 1,
+    debuging: navigator == null || navigator.systemLanguage == null,
+    language: (navigator == null || navigator.systemLanguage == null) ? "en-us" : navigator.systemLanguage.toLowerCase(),
+    database: { name: "Repeater", version: 13 },
+    initialize: function (options)
     {
-        try { return navigator.systemLanguage.toLowerCase(); }
-        catch (e) { return "en-us"; }
-    })(),
-    database: { name: "Repeater", version: 13 }
+        options = options || {};
+
+        this.volumn = isNaN(options.volumn) ? this.volumn : options.volumn;
+        this.language = options.language || this.language;
+    }
 };
 
-config.urls =
-{
+config.langs = {
+    store: { "en-us": "iRepeater Store", "zh-cn": "iRepeater Store" },
+    featured: { "en-us": "Featured", "zh-cn": "推荐" },
+    charts: { "en-us": "", "zh-cn": "" },
+    genius: { "en-us": "", "zh-cn": "" },
+    genius: { "en-us": "", "zh-cn": "" },
+    genius: { "en-us": "", "zh-cn": "" },
+    genius: { "en-us": "", "zh-cn": "" },
+};
+
+config.urls = {
     partial: "http://192.168.1.2/api/partial"
 };
 
-config.menus =
-{
-    featured: { h1: "iRepeater Store", name: "featured", text: "Featured", search: true },
-    genius: { h1: "Genius", name: "genius", text: "Genius", search: true },
-    charts: { h1: "Top Charts", name: "charts", text: "Top Charts", search: true },
-    categories: { h1: "Categories", name: "categories", text: "Categories", search: true },
-    purchased: { h1: "Purchased", name: "purchased", text: "Purchased" },
-    updates: { h1: "Updates", name: "updates", text: "Updates" }
-};
-
-config.lang =
-{
-
+config.partials = {
+    featured: { title: config.langs.store[config.language], menu: { text: config.langs.store[config.language] }, searchable: true },
+    genius: { title: "Genius", menu: { text: "Genius" }, searchable: true },
+    charts: { title: "Top Charts", menu: { text: "Top Charts" }, searchable: true },
+    categories: { title: "Categories", menu: { text: "Categories" }, searchable: true },
+    purchased: { title: "Purchased", menu: { text: "Purchased" } },
+    updates: { title: "updates", menu: { text: "Updates" } },
+    hottest: { title: "What's Hot " },
+    newest: { title: "New & Noteworthy" }
 };
