@@ -14,22 +14,23 @@
             this._generateMenu(config.partials);
             this._resizePage($(window).width(), $(window).height());
 
-
-            $(document).bind("mouseup", function (event) { _this._touchEnd($(this), event); })
-                       .bind("mouseleave", function (event) { _this._touchEnd($(this), event); })
-                       .bind("mousemove", function (event) { _this._touchMove($(this), event); })
-                       .bind("touchend", function (event) { _this._touchEnd($(this), event.originalEvent.touches[0]); })
+            $(document).bind("touchend", function (event) { _this._touchEnd($(this), event.originalEvent.touches[0]); })
                        .bind("touchcancel", function (event) { _this._touchEnd($(this), event.originalEvent.touches[0]); })
                        .bind("touchmove", function (event) { _this._touchMove($(this), event.originalEvent.touches[0]); event.preventDefault(); });
 
             $("div#header input.keywords").watermark("Search")
                                           .focus(function (event) { $(this).select(); })
                                           .keypress(function (event) { _this._keypress($(this), event); })
-                                          .bind("propertychange input", function (event) { _this._change($(this), event); });
+                                          .bind("input", function (event) { _this._change($(this), event); });
 
-            $("div#header a.back").live("click", function () { _this._back(); });
-            $("div#header div.search a.clear").click(function () { _this._clearKeywords(); });
-            $("div#footer ul.menu a:first").click();
+            $("div#header a.back").live("click", function (event) { _this._back($(this), event); });
+            $("div#header div.search a.clear").live("click", function () { _this._clearKeywords(); });
+
+            $("div.partial h2.showcase a").live("click", function (event) { _this._loadPartial($(this).attr("name")); });
+            $("div.partial a.topic").live("click", function (event) { _this._loadPartial("topic", { id: $(this).attr("identity"), title: $(this).attr("title") }); });
+            $("div.partial ul.showcase div.item").live("click", function (event) { _this._loadPartial("product", { id: $(this).attr("identity"), title: $(this).attr("title") }); });
+
+            $("div#footer ul.menu a").live("click", function () { _this._selectMenu($(this), this.options); }).eq(0).click();
         },
         _touchStart: function (sender, event)
         {
@@ -195,63 +196,65 @@
         {
             alert(keywords);
         },
-        _back: function ()
+        _clearKeywords: function ()
+        {
+            $("input.keywords").val("").blur().parent().removeClass("filled");
+        },
+        _back: function (sender, event)
         {
             var _this = this;
             var indexed = $("div.partial[index]");
             var visible = indexed.filter(":visible");
             var index = i(visible.attr("index"));
-            var previous = indexed.filter("[index=" + (index - 1) + "]").show();
-            var previousName = previous.attr("name");
+            var previous = isNaN(index) ? indexed.last().show() : indexed.filter("[index=" + (index - 1) + "]").show();
+            var previousIndex = i(previous.attr("index"));
             var width = $(window).width();
             var body = $(document.body).addClass("loading");
             var header = $("div#header");
             var h1 = header.children("h1:visible");
             var back = header.children("a.back:visible");
-            var h1New = header.children("h1.template").clone().removeClass("template").text(config.partials[previousName].title);
-            var backNew = header.children("a.back.template").clone().removeClass("template").text(h1.text());
+            var name = previous.attr("name");
+            var title = previous.attr("title");
+            var h1New = header.children("h1.template").clone().removeClass("template").text(title);
             var h1MarginLeft = h1New.i("margin-left");
-            var backMarginLeft = backNew.i("margin-left");
-            var duration = 5000;
+            var backMarginLeft = back.i("margin-left");
+            var duration = 500;
 
             h1.animate({ marginLeft: $(window).width() - h1New.r("width", 0.5), opacity: 0 }, duration, function () { $(this).remove(); });
-            back.animate({ marginLeft: i(0.5 * ($(window).width() - backNew.outerWidth())), opacity: 0 }, duration, function () { $(this).remove(); });
+            back.animate({ marginLeft: i(0.5 * ($(window).width() - back.outerWidth())), opacity: 0 }, duration, function () { $(this).remove(); });
             h1New.css({ opacity: 0 }).prependTo(header).css({ marginLeft: -h1.r("width", 0.5) - backMarginLeft }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
 
-            if (index >= 2)
+            if (previousIndex >= 1)
             {
+                var earlier = indexed.filter("[index=" + (previousIndex - 1) + "]");
+                var earlierName = earlier.attr("name");
+                var earlierTitle = earlier.attr("title");
+                var backNew = header.children("a.back.template").clone().removeClass("template").text(earlierTitle);
                 backNew.css({ opacity: 0 }).prependTo(header).css({ marginLeft: -0.5 * ($(window).width()) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
             }
 
-
-            visible.animate({ width: 0 },
-            {
+            previous.animate({ marginLeft: 0 }, {
                 duration: duration,
                 step: function (current)
                 {
-                    $(this).css({ marginLeft: width - current });
-                    previous.css({ marginLeft: -current });
+                    visible.css({ marginLeft: width + current, width: -current });
                 },
                 complete: function ()
                 {
-                    $(this).remove();
+                    visible.remove();
                     body.removeClass("loading");
-                    previous.css({ marginLeft: 0 }).show();
                 }
             });
         },
-        _clearKeywords: function ()
-        {
-            $("input.keywords").val("").blur().parent().removeClass("filled");
-        },
-        _loadPartial: function (name)
+        _loadPartial: function (name, data)
         {
             var _this = this;
             var indexed = $("div.partial[index]");
             var header = $("div#header");
             var h1 = header.children("h1:visible");
             var back = header.children("a.back:visible");
-            var h1New = header.children("h1.template").clone().removeClass("template").text(config.partials[name].title);
+            var title = (function (c, d) { return (c && c.title) ? c.title : d.title; })(config.partials[name], data);
+            var h1New = header.children("h1.template").clone().removeClass("template").text(title);
             var backNew = header.children("a.back.template").clone().removeClass("template").text(h1.text());
             var body = $(document.body).addClass("loading");
             var loading = $("div#loading").hide();
@@ -265,7 +268,7 @@
 
                     if (json != undefined)
                     {
-                        _this._generatePartial(name, json);
+                        _this._generatePartial(name, title, json);
                         body.removeClass("loading");
                     }
                 }
@@ -273,7 +276,7 @@
 
             if (indexed.length > 0)
             {
-                var duration = 5000;
+                var duration = 500;
                 var h1MarginLeft = h1New.i("margin-left");
                 var backMarginLeft = backNew.i("margin-left");
 
@@ -288,7 +291,8 @@
                     {
                         $(this).hide();
                         loading.show();
-                        _this._loadingPartial(name, complete);
+
+                        _this._loadingPartial(name, data, complete);
                     }
                 });
             }
@@ -298,28 +302,41 @@
                 back.remove();
                 h1New.appendTo(header);
                 loading.show();
-                this._loadingPartial(name, complete);
+                this._loadingPartial(name, data, complete);
             }
         },
-        _loadingPartial: function (name, callback)
+        _loadingPartial: function (name, data, callback)
         {
             var options =
             {
                 url: config.urls.partial.replace(/(\/*)$/, "/") + name,
+                data: data,
                 cache: false,
                 success: function (json)
                 {
-                    if (typeof callback == "function") { callback(json); }
+                    if (loadingIndex == _this.__loadingIndex)
+                    {
+                        if (typeof callback == "function") { callback(json); }
+                    }
                 },
                 error: function (response)
                 {
-                    alert("Cannot connect to iRepeater Store");
+                    if (loadingIndex == _this.__loadingIndex)
+                    {
+                        alert("Cannot connect to iRepeater Store");
+                    }
                 },
                 complete: function ()
                 {
-                    if (typeof callback == "function") { callback(); }
+                    if (loadingIndex == _this.__loadingIndex)
+                    {
+                        if (typeof callback == "function") { callback(); }
+                    }
                 }
             };
+
+            var _this = this;
+            var loadingIndex = this.__loadingIndex = (this.__loadingIndex || 0) + 1;
 
             $.ajax(options);
         },
@@ -349,7 +366,8 @@
             var searchClear = search.children("a.clear");
 
             h1.css({ fontSize: i(height * 0.42), height: height, lineHeight: height + "px", width: i(width * 0.25) }).css({ marginLeft: i(0.5 * (width - h1.width())) });
-            back.css({ fontSize: i(height * 0.28), height: i(height * 0.7), marginLeft: r(width * 0.016), padding: "0px " + i(height * 0.4) + "px" }).css({ lineHeight: back.css("height"), marginTop: r(0.5 * (height - back.height())) });
+            back.css({ fontSize: i(height * 0.28), height: i(height * 0.7), marginLeft: r(width * 0.016) });
+            back.css({ "border-left-width": back.r("height", 0.5), "border-right-width": back.r("height", 0.25), lineHeight: back.css("height"), marginTop: r(0.5 * (height - back.height())) });
             search.css({ height: i(height * 0.33) * 2, right: i(width * 0.013), width: i(width * 0.2) });
             search.css({ borderRadius: search.height(), marginTop: r(0.5 * (height - search.height())), boxShadow: this._getShadow(height * 0.05, height * 0.05, height * 0.05, "rgba(0,0,0,0.5)", true) });
             keywords.css({ fontSize: i(search.height() * 0.5), marginLeft: search.height(), marginTop: i(search.height() * 0.15) }).css({ height: search.height() - 2 * keywords.i("margin-top") });
@@ -379,7 +397,9 @@
             var banner = partial.find("a.banner");
             var loop = partial.find("ul.loop");
             var loopList = loop.children();
+            var superlink = partial.find("div.superlink");
             var showcase = partial.find(".showcase");
+            var quickLink = partial.find(".quicklink");
 
             var radius = r(width * 0.005);
             var grid = { height: i(width * 0.1), width: i(width * 0.242) };
@@ -388,8 +408,10 @@
             banner.css({ "border-bottom-left-radius": radius, "border-top-left-radius": radius, height: 3 * grid.height, marginLeft: margin, marginTop: margin, width: 3 * grid.width });
             loop.css({ "border-bottom-right-radius": radius, "border-top-right-radius": radius, height: 3 * grid.height, marginRight: margin, marginTop: margin, width: grid.width });
             loopList.css({ height: grid.height, width: "100%" });
+            superlink.css({ fontSize: i(width * 0.013), lineHeight: 2.5, paddingTop: i(width * 0.025) });
 
             this._resizeShowcase(showcase, width, margin);
+            this._resizeQuickLink(quickLink, width, margin);
         },
         _resizeShowcase: function (showcase, width, margin)
         {
@@ -427,18 +449,34 @@
             icon.css({ margin: margin, height: item.height() - 2 * margin }).css({ borderRadius: icon.i("height", 0.12), width: icon.height() });
             iconType.css({ "border-top-right-radius": icon.i("height", 0.12), height: i(width * 0.0175) }).css({ marginTop: -iconType.height(), width: iconType.height() });
             info.css({ height: icon.height(), marginTop: margin, width: item.width() - icon.width() - 2 * margin });
-            name.css({ marginBottom: item.r("height", 0.03), fontSize: headSpan.css("font-size") });
+            name.css({ marginBottom: item.r("height", 0.03), fontSize: headSpan.css("font-size"), lineHeight: headSpan.css("font-size") });
             text.css({ marginBottom: name.css("margin-bottom"), fontSize: name.r("font-size", 0.65) });
             star.css({ height: text.i("font-size") });
-            price.css({ fontSize: i(width * 0.012), height: item.i("height", 0.25), marginRight: margin });
-            price.css({ marginTop: -i(0.5 * (info.height() + price.height())) });
-            price.css({ borderRadius: price.i("height", 0.15), lineHeight: price.css("height"), padding: "0px " + price.i("height", 0.5) + "px" });
-            price.css({ boxShadow: this._getShadow(price.height() * 0.05, price.height() * 0.05, price.height() * 0.1, "rgba(0,0,0,0.45)", true) });
+            price.css({ fontSize: i(width * 0.012), height: item.i("height", 0.25), marginRight: margin }).css({ marginTop: -i(0.5 * (info.height() + price.height())) });
+            price.css({ borderRadius: price.i("height", 0.18), lineHeight: price.css("height"), padding: "0px " + price.i("height", 0.5) + "px" });
+            price.css({ boxShadow: this._getShadow(price.height() * 0.0, price.height() * 0.05, price.height() * 0.2, "rgba(0,0,0,0.5)", true) });
             desc.css({ height: iconType.height() }).css({ lineHeight: desc.css("height"), marginTop: desc.i("height", 0.5) });
             descSpan.css({ fontSize: text.css("font-size"), marginLeft: margin, paddingLeft: desc.height() });
             navList.css({ height: i(width * 0.0065), margin: i(width * 0.01) }).css({ borderRadius: navList.height(), width: navList.height() });
             navList.css({ boxShadow: this._getShadow(navList.height() * 0.2, navList.height() * 0.2, navList.height() * 0.5, "rgba(0,0,0,0.45)", true) });
             navs.css({ height: navList.height() + 2 * i(navList.css("margin-top")) }).attr({ unitWidth: navList.width() + 2 * i(navList.css("margin-top")) });
+        },
+        _resizeQuickLink: function (quickLink, width, margin)
+        {
+            var head = quickLink.filter("h2");
+            var headSpan = head.children("span");
+            var div = quickLink.filter("div");
+            var welcome = div.find("p.welcome");
+            var links = div.find("ul.links");
+            var linkList = links.children();
+
+            head.css({ fontSize: i(width * 0.014), lineHeight: i(width * 0.05) + "px", marginTop: i(width * 0.04), width: width });
+            headSpan.css({ fontSize: i(width * 0.017), marginLeft: margin });
+            div.css({ boxShadow: this._getShadow(0, 0, i(width * 0.01), "rgba(0,0,0,0.3)", true), width: width - 2 - 4 * margin });
+            div.css({ borderRadius: i(width * 0.01), borderWidth: 1, margin: "0px " + margin + "px " + (2 * margin) + "px", padding: margin });
+            welcome.css({ fontSize: i(width * 0.025), height: i(width * 0.041) });
+            links.css({ fontSize: i(width * 0.016), lineHeight: 2.8, marginTop: margin });
+            linkList.css({ width: div.i("width", 1 / 3) });
         },
         _getShadow: function (x, y, range, color, inset)
         {
@@ -456,14 +494,14 @@
             var _this = this;
             setTimeout(function () { _this._loadPartial(options.name); });
         },
-        _generatePartial: function (name, json)
+        _generatePartial: function (name, title, json)
         {
             $("div.partial." + name).remove();
 
             var _this = this;
             var indexed = $("div.partial[index]");
             var template = $("div.partial.template");
-            var target = $("<div></div>").addClass("partial " + name);
+            var target = $("<div></div>").addClass("partial " + name).attr({ title: title });
 
             target.attr({ index: indexed.length, name: name, style: template.attr("style") });
             target.appendTo(document.body);
@@ -474,14 +512,19 @@
                     this._generateBanner(target, template, json.Topics);
                     this._generateShowcase(target, template, json.Newest, 6, "newest", true);
                     this._generateShowcase(target, template, json.Hottest, 6, "hottest", true);
+                    this._generateQuickLink(target, template);
                     break;
                 case "newest":
-                    this._generateShowcase(target, template, json, 12, "newest");
+                    this._generateShowcase(target, template, json, 12, name);
+                    break;
+                case "topic":
+                    this._generateShowcase(target, template, json.Products, 12, name);
                     break;
             }
 
-            target.bind("mousedown", function (event) { _this._touchStart($(this), event); })
-                  .bind("touchstart", function (event) { _this._touchStart($(this), event.originalEvent.touches[0]); });
+            this._generateSubperLink(target, template);
+
+            target.bind("touchstart", function (event) { _this._touchStart($(this), event.originalEvent.touches[0]); });
         },
         _generateBanner: function (target, template, array)
         {
@@ -497,7 +540,7 @@
             $.each(array, function (i, json)
             {
                 var item = li.clone().appendTo(loop);
-                item.find("img").attr({ src: json.ImageUrl });
+                item.find("a.topic").attr({ identity: json.Id, title: json.Name }).find("img").attr({ src: json.ImageUrl });
             });
 
             var count = loop.children().length;
@@ -507,7 +550,8 @@
             var animate = function ()
             {
                 var li = loop.children();
-                banner.find("img").attr("src", li.last().find("img").attr("src"));
+                var lastLink = li.last().find("a.topic");
+                banner.attr({ identity: lastLink.attr("identity"), title: lastLink.attr("title") }).find("img").attr("src", lastLink.find("img").attr("src"));
                 li.first().before(li.last().remove());
                 loop.scrollTop(scrollTop);
 
@@ -519,13 +563,13 @@
 
             animate();
         },
-        _generateShowcase: function (target, template, array, pageSize, category, light)
+        _generateShowcase: function (target, template, array, pageSize, name, light)
         {
             var _this = this;
 
-            var head = template.find("h2.showcase").clone().attr({ category: category });
-            var div = template.find("div.showcase").clone().attr({ category: category });
-            var desc = template.find("p.showcase").clone().attr({ category: category });
+            var head = template.find("h2.showcase").clone().attr({ name: name });
+            var div = template.find("div.showcase").clone().attr({ name: name });
+            var desc = template.find("p.showcase").clone().attr({ name: name });
             var navs = null, navItem = null;
 
             var pages = div.children("ul");
@@ -535,7 +579,7 @@
             var pageCount = Math.ceil(array.length / pageSize);
             var autoWidth = i(pages.attr("autoWidth"));
 
-            head.appendTo(target).find("span").text(config.partials[category].title + " ");
+            head.appendTo(target).find("span").text(config.partials[name].title + " ");
             div.appendTo(target);
             pages.empty().appendTo(div);
             pageItem.empty();
@@ -543,10 +587,10 @@
 
             if (light)
             {
-                var navs = template.find("ol.showcase").clone().attr({ category: category });
+                var navs = template.find("ol.showcase").clone().attr({ name: name });
                 var navItem = navs.children("li:first").clone();
                 navs.empty().appendTo(target).css({ width: pageCount * i(navs.attr("unitWidth")) });
-                head.find("a").click(function () { _this._loadPartial(category); });
+                head.find("a").attr({ name: name });
                 head.find("label").remove();
             }
             else
@@ -556,10 +600,9 @@
                 head.find("a").remove();
             }
 
-            pages.bind("mousedown", function (event) { _this._touchStart($(this), event); })
-                 .bind("touchstart", function (event) { _this._touchStart($(this), event.originalEvent.touches[0]); });
+            pages.bind("touchstart", function (event) { _this._touchStart($(this), event.originalEvent.touches[0]); });
 
-            for (var c = 0; c < pageCount; c++)
+            for (var c = 0; c < (pageCount || 1) ; c++)
             {
                 var page = pageItem.clone().attr({ index: c }).appendTo(pages);
 
@@ -574,8 +617,16 @@
                     var product = array[index];
                     var item = productItem.clone();
 
-                    if (index >= array.length) { break; }
+                    if (i(j / 3) % 2 == 1) { item.addClass("alter"); }
+                    if (j % 3 == 1) { item.css({ width: autoWidth }); }
 
+                    if (index >= array.length)
+                    {
+                        item.empty().appendTo(page);
+                        continue;
+                    }
+
+                    item.attr({ identity: product.Id, title: product.Name });
                     item.find("div.icon>img").attr({ src: product.IconUrl });
                     item.find("div.icon>span.type").addClass(product.Visual ? "video" : "audio");
                     item.find("p.name").text(product.Name);
@@ -583,14 +634,20 @@
                     item.find("p.category>span.class").text(product.Class);
                     item.find("p.category>span.subclass").text(product.SubClass);
                     item.find("p.star").css({ backgroundPositionY: function () { return -$(this).height() * product.Star } });
-                    item.find("a.price").text(product.Price == 0 ? "Free" : (product.PriceUnit + " " + product.Price.toFixed(2)));
-
-                    if (i(j / 3) % 2 == 1) { item.addClass("alter"); }
-                    if (j % 3 == 1) { item.css({ width: autoWidth }); }
+                    item.find("a.price").text(product.Price == 0 ? "Free" : (product.PriceUnit + product.Price.toFixed(2)));
 
                     item.appendTo(page);
                 }
             }
+        },
+        _generateQuickLink: function (target, template)
+        {
+            var head = template.find("h2.quicklink").clone().appendTo(target);
+            var div = template.find("div.quicklink").clone().appendTo(target);
+        },
+        _generateSubperLink: function (target, template)
+        {
+            template.find("div.superlink").clone().appendTo(target);
         },
         _generateClear: function (tagName)
         {
@@ -612,7 +669,7 @@
                     var options = { name: name, searchable: partial.searchable };
                     var anchor = template.clone().appendTo(container).children("a");
 
-                    anchor.text(text).click(function () { _this._selectMenu($(this), options); });
+                    anchor.text(text).get(0).options = options;
                 }
             });
         }

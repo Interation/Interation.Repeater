@@ -54,6 +54,9 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Css\Video.css" />
+    <Content Include="Images\back-front.png" />
+    <Content Include="Images\back-center.png" />
+    <Content Include="Images\back-behind.png" />
     <Content Include="Images\camera.png" />
     <Content Include="Images\Clear.png" />
     <Content Include="Images\FooterBackground.jpg" />

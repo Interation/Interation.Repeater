@@ -15,6 +15,13 @@ namespace Interation.Repeater.Service.ServiceImplementation
             _topicRepository = topicRepository;
         }
 
+        public TopicContract Get(int id)
+        {
+            var topic = _topicRepository.Get(id);
+            if (topic == null) { return null; }
+            return topic.ToContract();
+        }
+
         public List<TopicContract> GetAdvised()
         {
             var topics = _topicRepository.GetCurrentTopics();
@@ -22,6 +29,15 @@ namespace Interation.Repeater.Service.ServiceImplementation
             if (topics == null) { return null; }
 
             return topics.ConvertAll(refer => refer.ToContract());
+        }
+
+        public List<ProductContract> GetTopicMembers(int topicId)
+        {
+            var products = _topicRepository.GetTopicMembers(topicId);
+
+            if (products == null) { return null; }
+
+            return products.ConvertAll(refer => refer.ToContract());
         }
     }
 }

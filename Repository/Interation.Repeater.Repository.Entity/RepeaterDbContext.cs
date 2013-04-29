@@ -1,6 +1,9 @@
-﻿using System.Data.Entity;
+﻿using System.Data;
+using System.Data.Common;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Objects;
+using System.Data.SqlClient;
 using Interation.Repeater.Repository.Entity.Maps;
 using Interation.Repeater.Repository.Entity.Models;
 
@@ -17,6 +20,7 @@ namespace Interation.Repeater.Repository.Entity
         public DbSet<Topic> Topics { get; set; }
         public DbSet<TopicGroup> TopicGroups { get; set; }
         public DbSet<TopicGroupMember> TopicGroupMembers { get; set; }
+        public DbSet<TopicMember> TopicMembers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -24,36 +28,7 @@ namespace Interation.Repeater.Repository.Entity
             modelBuilder.Configurations.Add(new TopicGroupMap());
             modelBuilder.Configurations.Add(new TopicGroupMemberMap());
             modelBuilder.Configurations.Add(new TopicMap());
-        }
-
-        public virtual ObjectResult<Topic> Proc_SelectCurrentTopics()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreQuery<Topic>("Proc_SelectCurrentTopics");
-        }
-
-        public virtual ObjectResult<Topic> Proc_SelectCurrentTopics(MergeOption mergeOption)
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreQuery<Topic>("Proc_SelectCurrentTopics", mergeOption);
-        }
-
-        public virtual ObjectResult<Product> Proc_SelectHottestProducts()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreQuery<Product>("Proc_SelectHottestProducts");
-        }
-
-        public virtual ObjectResult<Product> Proc_SelectHottestProducts(MergeOption mergeOption)
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreQuery<Product>("Proc_SelectHottestProducts", mergeOption);
-        }
-
-        public virtual ObjectResult<Product> Proc_SelectNewestProducts()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreQuery<Product>("Proc_SelectNewestProducts");
-        }
-
-        public virtual ObjectResult<Product> Proc_SelectNewestProducts(MergeOption mergeOption)
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteStoreQuery<Product>("Proc_SelectNewestProducts", mergeOption);
+            modelBuilder.Configurations.Add(new TopicMemberMap());
         }
     }
 }

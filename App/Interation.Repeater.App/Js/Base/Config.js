@@ -28,12 +28,13 @@ config.urls = {
 };
 
 config.partials = {
-    featured: { title: config.langs.store[config.language], menu: { text: config.langs.store[config.language] }, searchable: true },
+    featured: { title: config.langs.store[config.language], menu: { text: "Featured" }, searchable: true },
     genius: { title: "Genius", menu: { text: "Genius" }, searchable: true },
     charts: { title: "Top Charts", menu: { text: "Top Charts" }, searchable: true },
     categories: { title: "Categories", menu: { text: "Categories" }, searchable: true },
     purchased: { title: "Purchased", menu: { text: "Purchased" } },
-    updates: { title: "updates", menu: { text: "Updates" } },
+    updates: { title: "Updates", menu: { text: "Updates" } },
+    topic: { },
     hottest: { title: "What's Hot " },
     newest: { title: "New & Noteworthy" }
 };

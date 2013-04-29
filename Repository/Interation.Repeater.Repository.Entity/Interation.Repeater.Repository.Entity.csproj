@@ -49,11 +49,13 @@
     <Compile Include="Maps\TopicGroupMap.cs" />
     <Compile Include="Maps\TopicGroupMemberMap.cs" />
     <Compile Include="Maps\TopicMap.cs" />
+    <Compile Include="Maps\TopicMemberMap.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Topic.cs" />
     <Compile Include="Models\TopicGroup.cs" />
     <Compile Include="Models\TopicGroupMember.cs" />
+    <Compile Include="Models\TopicMember.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepeaterDbContext.cs" />
   </ItemGroup>

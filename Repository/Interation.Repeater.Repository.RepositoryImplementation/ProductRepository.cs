@@ -12,7 +12,7 @@ namespace Interation.Repeater.Repository.RepositoryImplementation
         {
             using (var db = new RepeaterDbContext())
             {
-                var result = db.Proc_SelectNewestProducts();
+                var result = db.Database.SqlQuery<Product>("Proc_SelectNewestProducts").ToList();
                 if (count == 0) { return result.ToList(); }
                 return result.Take(count).ToList();
             }
@@ -22,7 +22,7 @@ namespace Interation.Repeater.Repository.RepositoryImplementation
         {
             using (var db = new RepeaterDbContext())
             {
-                var result = db.Proc_SelectHottestProducts();
+                var result = db.Database.SqlQuery<Product>("Proc_SelectHottestProducts").ToList();
                 if (count == 0) { return result.ToList(); }
                 return result.Take(count).ToList();
             }

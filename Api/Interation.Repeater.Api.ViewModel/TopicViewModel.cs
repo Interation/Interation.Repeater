@@ -12,5 +12,6 @@ namespace Interation.Repeater.Api.ViewModel
         public string Name { get; set; }
         public string ImageUrl { get; set; }
         public DateTime CreatedDate { get; set; }
+        public List<ProductViewModel> Products { get; set; }
     }
 }
