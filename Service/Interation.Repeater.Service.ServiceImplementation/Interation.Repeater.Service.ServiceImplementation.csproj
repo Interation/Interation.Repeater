@@ -50,6 +50,10 @@
       <Project>{a5153b81-65fb-44b0-9a88-0e37149576d0}</Project>
       <Name>Interation.Repeater.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Foundation\Interation.Repeater.Foundation\Interation.Repeater.Foundation.csproj">
+      <Project>{0ccc213a-a448-479d-a8b3-af5dcd3f677c}</Project>
+      <Name>Interation.Repeater.Foundation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Repository\Interation.Repeater.Repository.Entity\Interation.Repeater.Repository.Entity.csproj">
       <Project>{18f59038-ab8e-40b9-ae19-b2e81a0c7dae}</Project>
       <Name>Interation.Repeater.Repository.Entity</Name>

@@ -15,13 +15,17 @@ namespace Interation.Repeater.Service.Contract
                 PriceUnit = contract.Market.ToCurrencyUnit().ToUnitString(),
                 Class = contract.Class,
                 SubClass = contract.SubClass,
+                Language = contract.Language.ToString(),
                 Visual = contract.Visual,
+                Version = contract.Version,
                 Downloads = contract.Downloads,
                 Star = contract.Star,
+                Size = contract.Size,
                 IconUrl = contract.IconUrl,
                 ScrollingNumber = contract.ScrollingNumber,
-                CreatedDate = contract.CreatedDate,
-                UpdatedDate = contract.UpdatedDate
+                Descriptions = contract.Descriptions,
+                Created = contract.CreatedDate,
+                Updated = contract.UpdatedDate ?? contract.CreatedDate
             };
         }
     }

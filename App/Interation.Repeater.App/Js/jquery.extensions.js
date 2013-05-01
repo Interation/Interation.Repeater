@@ -20,6 +20,25 @@
                 return result;
             }
         },
+        formatFileSize: function (kb)
+        {
+            if (kb > 1099511627776)
+            {
+                return (kb / 1099511627776) + "TB";
+            }
+            else if (kb > 1073741824)
+            {
+                return (kb / 1073741824) + "GB";
+            }
+            else if (kb > 1048576)
+            {
+                return (kb / 1048576) + "MB";
+            }
+            else
+            {
+                return kb + "KB";
+            }
+        },
         formatDate: function (date, format)
         {
             var o =

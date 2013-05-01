@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Interation.Repeater.Api.ViewModel;
 using Interation.Repeater.Service.Contract;
@@ -48,7 +49,7 @@ namespace Interation.Repeater.Api.Controllers
             }
 
             var products = _topicService.GetTopicMembers(topicContract.Id);
-            
+
             var topicViewModel = new TopicViewModel
             {
                 Id = topicContract.Id,
@@ -61,11 +62,33 @@ namespace Interation.Repeater.Api.Controllers
             return Json(topicViewModel, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Newest(string version)
+        public JsonResult Products(string orderby)
         {
-            var viewModel = _productService.GetNewest().ConvertAll(refer => refer.ToViewModel());
+            var viewModel = null as List<ProductViewModel>;
+
+            switch (orderby)
+            {
+                case "hottest":
+                    viewModel = _productService.GetHottest().ConvertAll(refer => refer.ToViewModel());
+                    break;
+                case "newest":
+                    viewModel = _productService.GetNewest().ConvertAll(refer => refer.ToViewModel());
+                    break;
+            }
 
             return Json(viewModel, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Product(int id)
+        {
+            var product = _productService.Get(id);
+
+            if (product == null)
+            {
+                return Json(new { success = false, message = "Topic not found" });
+            }
+
+            return Json(product.ToViewModel(), JsonRequestBehavior.AllowGet);
         }
     }
 }

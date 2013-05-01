@@ -8,6 +8,14 @@ namespace Interation.Repeater.Repository.RepositoryImplementation
 {
     public class ProductRepository : IProductRepository
     {
+        public Product Get(int id)
+        {
+            using (var db = new RepeaterDbContext())
+            {
+                return db.Products.Where(refer => refer.Id == id).SingleOrDefault();
+            }
+        }
+
         public List<Product> GetNewest(int count)
         {
             using (var db = new RepeaterDbContext())

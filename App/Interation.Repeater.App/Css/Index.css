@@ -1,8 +1,7 @@
 ﻿::-ms-clear { display: none; }
 
 html { height:100%; }
-html body { background:#000000; font-family:'Helvetica Neue',Arial; font-size:12px; height:100%; margin:0px; overflow:hidden; }
-html body.loading { background:#cbcbcb; }
+html body { -webkit-overflow-scrolling:none; background:#cbcbcb; font-family:'Helvetica Neue',Arial; font-size:12px; height:100%; margin:0px; overflow:hidden; }
 html a { -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none; color:#000000; text-decoration:none; }
 html a:active { -webkit-mask:none; }
 html h1, h2, h3 { margin:0px; padding:0px; }
@@ -11,25 +10,25 @@ html p { margin:0px; padding:0px; }
 html table, tr, td { border:none; border-collapse:collapse; margin:0px; padding:0px; }
 html ul, ol, li { border:none; list-style:none; margin:0px; padding:0px; }
 html img { border:none; }
-html input { border:none; }
-html input:focus { -webkit-tap-highlight-color:rgba(0,0,0,0); -webkit-user-modify: read-write-plaintext-only; }
+html input { -webkit-tap-highlight-color:transparent; border:none; }
+html input:focus { -webkit-tap-highlight-color:transparent; -webkit-user-modify: read-write-plaintext-only; }
 
 .clear { clear:both; font-size:0px; height:0px; overflow:hidden; width:0px; }
 
-div#header { background:url(../images/headerbackground.jpg) repeat-x; background-size:auto 100%; overflow:hidden; position:absolute; width:100%; z-index:1; }
+div#header { background:url(../images/headerbackground.jpg) repeat-x; background-size:auto 100%; overflow:hidden; position:fixed; width:100%; z-index:1; }
 div#header h1 { color:rgba(0,0,0,0.5); float:left; position:absolute; text-align:center; text-shadow:1px 1px #dddddd; top:0px; }
 div#header h1.template { display:none; }
 div#header a.back { background-image:url(../images/back-center.png),url(../images/back-front.png),url(../images/back-behind.png); }
 div#header a.back { background-clip:content-box,border-box,border-box; background-origin:padding-box,border-box,border-box; background-position:center,left,right; background-repeat:repeat-x,no-repeat,no-repeat; background-size:auto 100%,auto 100%,auto 100%; }
-div#header a.back { border:solid transparent 0px; color:#ffffff; float:left; font-weight:bold; display:block; margin:0px; overflow:hidden; padding:0px; position:absolute; text-shadow:-1px -1px #333333; top:0px; }
+div#header a.back { border:solid transparent 0px; color:#ffffff; display:block; float:left; font-weight:bold; margin:0px; min-width:30px; overflow:hidden; padding:0px; position:absolute; text-align:center; text-shadow:-1px -1px #333333; top:0px; }
 div#header a.back.template { display:none; }
 div#header div.search { background:#ffffff url(../images/search.png) no-repeat left center; background-size:auto 100%; position:absolute; top:0; }
-div#header div.search input.keywords { -webkit-tap-highlight-color:transparent; background:transparent; float:left; padding:0px; width:150px; }
+div#header div.search input.keywords { background:transparent; float:left; padding:0px; width:150px; }
 div#header div.search input.empty { color:#cccccc; }
 div#header div.search a.clear { background:url(../images/clear.png) no-repeat; background-size:100% 100%; clear:none; display:none; float:left; }
 div#header div.search.filled a.clear { display:block; }
 
-div#footer { background:#000000 url(../images/footerbackground.jpg) repeat-x; background-size:auto 100%; position:absolute; width:100%; z-index:1; }
+div#footer { background:#000000 url(../images/footerbackground.jpg) repeat-x; background-size:auto 100%; position:fixed; width:100%; z-index:1; }
 div#footer ul.menu { margin:0px auto; height:100%; }
 div#footer ul.menu>li { display:block; float:left; height:100%; }
 div#footer ul.menu>li a { color:rgba(255,255,255,0.75); display:block; font-weight:bold; height:100%; overflow:hidden; text-align:center; width:100%; }
@@ -38,23 +37,23 @@ div#footer ul.menu>li a.selected { background:rgba(255,255,255,0.1); }
 
 div#loading { background:#cbcbcb url(../images/loading-indicator.gif) no-repeat left center; background-size:auto 50%; font-weight:bold; position:absolute; text-shadow:1px 1px #dddddd; }
 
-div.partial { background:#cbcbcb; float:left; overflow-x:hidden; overflow-y:auto; position:absolute; }
-div.partial a.banner { -webkit-tap-highlight-color:transparent; background:#8a2529; float:left; overflow:hidden; }
+div.partial { -webkit-overflow-scrolling:touch; background:#cbcbcb; float:left; overflow-x:hidden; overflow-y:scroll; position:absolute; }
+div.partial a.banner { background:#8a2529; float:left; overflow:hidden; }
 div.partial a.banner img { height:100%; width:100%; }
-div.partial ul.loop { background:#8a2529; float:left; overflow:hidden; }
+div.partial ul.loop { -webkit-overflow-scrolling:touch; background:#8a2529; float:left; overflow:hidden; }
 div.partial ul.loop li { overflow:hidden; }
-div.partial ul.loop a { -webkit-tap-highlight-color:transparent; display:block; float:left; height:100%; width:100%; }
+div.partial ul.loop a { display:block; float:left; height:100%; width:100%; }
 div.partial ul.loop img { height:100%; width:100%; }
+div.partial h2 { position:relative; text-shadow:1px 1px #d8d8d8; }
 div.partial *.showcase { color:#222222; }
 div.partial *.showcase a { color:#222222; }
-div.partial h2 { position:relative; text-shadow:1px 1px #d8d8d8; }
 div.partial div.showcase { overflow:hidden; zoom:1; }
 div.partial div.showcase ul { overflow:hidden; width:134000000px; zoom:1; }
 div.partial div.showcase li { float:left; overflow:hidden; zoom:1; }
-div.partial div.showcase div.item { background:#afafaf; border:solid 1px; border-color:#c1c1c1 #979797 #979797 #c1c1c1; float:left; text-shadow:1px 1px #bfbfbf; }
+div.partial div.showcase div.item { -webkit-tap-highlight-color:transparent; background:#afafaf; border:solid 1px; border-color:#c1c1c1 #979797 #979797 #c1c1c1; float:left; text-shadow:1px 1px #bfbfbf; }
 div.partial div.showcase div.item.alter { background:#bbbbbb; text-shadow:1px 1px #cccccc; }
 div.partial div.showcase div.icon { background:#cccccc; float:left; overflow:hidden; }
-div.partial div.showcase div.icon img { border:none; float:left; height:100%; width:100%; }
+div.partial div.showcase div.icon img { float:left; height:100%; width:100%; }
 div.partial div.showcase div.icon span.type { background:#cccccc no-repeat center; background-size:auto 70%; display:block; float:left; }
 div.partial div.showcase div.icon span.video { background-image:url(../images/camera.png); }
 div.partial div.showcase div.icon span.audio { background-image:url(../images/sound.png); }
@@ -62,7 +61,8 @@ div.partial div.showcase div.info { float:left; }
 div.partial div.showcase p.name { font-weight:bold; text-shadow:1px 1px #cccccc; }
 div.partial div.showcase p.text { color:#383838; }
 div.partial div.showcase p.star { background:url(../images/stars.png) no-repeat; background-size:auto 600%; }
-div.partial div.showcase a.price { background:url(../images/back-center.png) repeat-x; background-size:auto 100%; color:#ffffff; float:right; font-weight:bold; text-shadow:-1px -1px #333333; text-transform:uppercase; }
+div.partial div.showcase a.price { background:#888888; color:#ffffff; float:right; font-weight:bold; text-align:center; text-shadow:-1px -1px #333333; text-transform:uppercase; white-space:nowrap; }
+div.partial div.showcase a.price.active { background-color:rgba(0,255,0,0.35); }
 div.partial p.showcase span { background:no-repeat left center; background-size:auto 70%; color:#555555; display:block; float:left; font-weight:bold; height:100%; }
 div.partial p.showcase span.video { background-image:url(../images/camera.png); }
 div.partial p.showcase span.audio { background-image:url(../images/sound.png); }
@@ -78,3 +78,21 @@ div.partial div.quicklink ul.links a { color:#555555; text-shadow:1px 1px #d0d0d
 div.partial div.superlink { text-align:center; }
 div.partial div.superlink a { text-decoration:underline; text-shadow:1px 1px #dddddd; }
 div.partial.template { display:none; }
+
+div.detail { }
+div.detail div.icon { background:#bbbbbb; float:left; overflow:hidden; }
+div.detail div.icon img { float:left; height:100%; width:100%; }
+div.detail div.icon span.type { background:#cccccc no-repeat center; background-size:auto 70%; display:block; float:left; }
+div.detail div.icon span.video { background-image:url(../images/camera-big.png); }
+div.detail div.icon span.audio { background-image:url(../images/sound-big.png); }
+div.detail a.price { background:#888888; color:#ffffff; display:block; float:left; font-weight:bold; text-align:center; text-shadow:-1px -1px #333333; text-transform:uppercase; white-space:nowrap; }
+div.detail a.price.active { background-color:rgba(0,255,0,0.35); }
+div.detail div.more { clear:both; }
+div.detail div.more a { background:no-repeat left center; background-size:auto 50%; color:#555555; display:block; float:right; font-weight:bold; text-transform:capitalize; }
+div.detail div.more a.up { background-image:url(../images/more-up.png); }
+div.detail div.more a.down { background-image:url(../images/more-down.png); }
+div.detail hr { border:none; border-bottom:solid 1px rgba(255,255,255,0.4); border-top:solid 1px rgba(0,0,0,0.15); }
+div.detail div.left { color:#555555; float:left; font-weight:bold; }
+div.detail div.right { float:left; }
+div.detail div.right p { color:#555555; }
+div.detail div.right p.head { font-weight:bold; }

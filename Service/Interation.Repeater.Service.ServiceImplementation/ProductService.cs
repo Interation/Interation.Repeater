@@ -15,6 +15,13 @@ namespace Interation.Repeater.Service.ServiceImplementation
             _productRepository = productRepository;
         }
 
+        public ProductContract Get(int id)
+        {
+            var product = _productRepository.Get(id);
+            if (product == null) { return null; }
+            return product.ToContract();
+        }
+
         public List<ProductContract> GetNewest()
         {
             return GetNewest(0);

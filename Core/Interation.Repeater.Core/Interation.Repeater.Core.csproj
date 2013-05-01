@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\CurrencyUnit.cs" />
+    <Compile Include="Enums\Language.cs" />
     <Compile Include="Enums\Market.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

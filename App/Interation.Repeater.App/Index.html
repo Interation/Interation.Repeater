@@ -11,31 +11,31 @@
         </a>
         <h1 class="template"></h1>
         <div class="search">
-            <input autocapitalize="off" autocorrect="off" class="keywords" for="search" type="search" />
+            <input action="search" autocapitalize="off" autocorrect="off" class="keywords" type="search" />
             <a class="clear" href="javascript:void(0);"></a>
         </div>
     </div>
 
     <div class="partial template">
-        <a class="topic banner" href="javascript:void(0);">
+        <a action="topic" class="topic banner" href="javascript:void(0);" name="topic">
             <img alt="" src="#" />
         </a>
         <ul class="loop">
             <li>
-                <a class="topic" href="javascript:void(0);">
+                <a action="topic" class="topic" href="javascript:void(0);" name="topic">
                     <img alt="" src="#" />
                 </a>
             </li>
         </ul>
         <h2 class="showcase">
             <span></span>
-            <a href="javascript:void(0);">See All &gt;</a>
+            <a action="products" class="chart" href="javascript:void(0);">See All &gt;</a>
             <label></label>
         </h2>
         <div class="showcase">
             <ul class="showcase">
                 <li>
-                    <div class="item">
+                    <div action="product" class="item" onclick="javascript:void(0);" name="product">
                         <div class="icon">
                             <img alt="" src="#" />
                             <span class="type"></span>
@@ -75,11 +75,42 @@
         </div>
         <div class="superlink"><a class="support" href="javascript:void(0);">Support</a></div>
         <div class="superlink"><a class="statement" href="javascript:void(0);">iRepeater Store Terms and Conditions...</a></div>
+
+        <div class="detail">
+            <div class="left">
+                <div class="icon">
+                    <img alt="" src="#" />
+                    <span class="type video"></span>
+                </div>
+                <p class="clear"></p>
+                <a class="price" href="javascript:void(0);"></a>
+                <p class="clear"></p>
+                <p class="text category">Category: <span></span></p>
+                <p class="text updated">Updated: <span></span></p>
+                <p class="text version">Current Version: <span></span></p>
+                <p class="text size">Size: <span></span></p>
+                <p class="text language">Language: <span></span></p>
+                <hr />
+                <p class="text rated">Rated: <span></span></p>
+            </div>
+            <div class="right">
+                <h3></h3>
+                <h2></h2>
+                <p class="head desc">Description</p>
+                <div class="more"><a class="more" href="javascript:void(0);">more</a></div>
+                <div class="clear"></div>
+                <div class="screenshot">
+                    <ul>
+                        <li><img alt="" src="#" /></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="footer" style="display:none;">
         <ul class="menu">
-            <li><a href="javascript:void(0);"></a></li>
+            <li><a action="menu" class="menu" href="javascript:void(0);"></a></li>
         </ul>
     </div>
     

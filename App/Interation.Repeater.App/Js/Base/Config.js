@@ -24,7 +24,8 @@ config.langs = {
 };
 
 config.urls = {
-    partial: "http://192.168.1.2/api/partial"
+    partial: "http://192.168.1.2/api/partial",
+    search: "http://192.168.1.2/api/search"
 };
 
 config.partials = {
@@ -34,7 +35,6 @@ config.partials = {
     categories: { title: "Categories", menu: { text: "Categories" }, searchable: true },
     purchased: { title: "Purchased", menu: { text: "Purchased" } },
     updates: { title: "Updates", menu: { text: "Updates" } },
-    topic: { },
     hottest: { title: "What's Hot " },
     newest: { title: "New & Noteworthy" }
 };
