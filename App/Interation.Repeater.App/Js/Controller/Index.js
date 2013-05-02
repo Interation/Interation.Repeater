@@ -14,10 +14,9 @@
             this._generateMenu(config.partials);
             this._resizePage($(window).width(), $(window).height());
 
-            $(document).bind("dbclick", function (event) { event.preventDefault(); })
-                       .bind("touchend", function (event) { _this._touchEnd($(this), event); })
+            $(document).bind("touchend", function (event) { _this._touchEnd($(this), event); })
                        .bind("touchcancel", function (event) { _this._touchEnd($(this), event); })
-                       .bind("touchmove", function (event) { _this._touchMove($(this), event); });
+                       .bind("touchmove", function (event) { _this._touchMove($(this), event); event.preventDefault(); });
 
             $("div#header input.keywords").watermark("Search")
                                           .focus(function (event) { $(this).select(); })
@@ -25,8 +24,7 @@
                                           .bind("input", function (event) { _this._change($(this), event); });
 
             $("div#header a.back").live("click", function (event) { _this._back($(this), event); });
-            $("div#header div.search a.clear").live("click", function () { _this._clearKeywords(); });
-
+            $("div#header div.search a.clear").live("click", function (event) { _this._clear($(this), event); });
 
             $("div.partial").live("touchstart", function (event) { _this._touchStart($(this), event); });
             $("div.partial div.showcase ul").live("touchstart", function (event) { _this._touchStart($(this), event); });
@@ -40,7 +38,7 @@
         },
         _touchStart: function (sender, event)
         {
-            var module = sender.attr("module");
+            var tag = sender.attr("tag");
             var touch = event.originalEvent.touches[0];
 
             if (this._touchInfo == undefined)
@@ -49,9 +47,14 @@
                 this._touchInfo.start = { pageX: touch.pageX, pageY: touch.pageY, time: Date.now() };
             }
 
+            if (this._touchInfo[tag] != undefined)
+            {
+                return;
+            }
+
             var args = { sender: sender };
 
-            switch (module)
+            switch (tag)
             {
                 case "partial":
                     args.value = sender.scrollTop();
@@ -59,11 +62,12 @@
                     args.maximum = sender.get(0).scrollHeight - sender.height();
                     args.maximum = args.maximum < args.minimum ? args.minimum : args.maximum;
                     break;
-                case "":
+                case "showcase":
+
                     break;
             }
 
-            this._touchInfo[module] = args;
+            this._touchInfo[tag] = args;
         },
         _touchMove: function (sender, event)
         {
@@ -93,89 +97,14 @@
                 var args = this._touchInfo.partial;
                 args.sender.scrollTop(args.value - touch.pageY + start.pageY);
             }
-
-            event.preventDefault();
-
-            //if (this._touchInfo.partial != undefined)
-            //{
-            //    if (this._touchInfo.vertical === true || this._touchInfo.showcase == undefined)
-            //    {
-            //        var _info = this._touchInfo.partial;
-            //        var _sender = _info.sender;
-
-            //        var marginTop = _info.marginTop + event.pageY - start.pageY;
-            //        if (marginTop < _info.minMarginTop) { marginTop = _info.minMarginTop + (marginTop - _info.minMarginTop) * 0.5; }
-            //        else if (marginTop > _info.maxMarginTop) { marginTop = _info.maxMarginTop + (marginTop - _info.maxMarginTop) * 0.5; }
-
-            //        _sender.css({ marginTop: marginTop });
-            //    }
-            //}
-
-            //if (this._touchInfo.showcase != undefined)
-            //{
-            //    if (this._touchInfo.vertical === false)
-            //    {
-            //        var _info = this._touchInfo.showcase;
-            //        var _sender = _info.sender;
-
-            //        var marginLeft = _info.marginLeft + event.pageX - start.pageX;
-            //        if (marginLeft < _info.minMarginLeft) { marginLeft = _info.minMarginLeft; }
-            //        else if (marginLeft > _info.maxMarginLeft) { marginLeft = _info.maxMarginLeft; }
-
-            //        _sender.css({ marginLeft: marginLeft });
-            //    }
-            //}
         },
         _touchEnd: function (sender, event)
         {
             this._touchInfo = null;
-
-            //if (this._touchInfo == undefined)
-            //{
-            //    return;
-            //}
-
-            //if (this._touchInfo.partial != undefined && this._touchInfo.vertical === true)
-            //{
-            //    var _info = this._touchInfo.partial;
-            //    var _sender = _info.sender;
-            //    var marginTop = _sender.i("margin-top");
-
-            //    if (marginTop < _info.minMarginTop) { _sender.animate({ marginTop: _info.minMarginTop }); }
-            //    else if (marginTop > _info.maxMarginTop) { _sender.animate({ marginTop: _info.maxMarginTop }); }
-            //}
-
-            //if (this._touchInfo.showcase != undefined && this._touchInfo.vertical === false)
-            //{
-            //    var _info = this._touchInfo.showcase;
-            //    var _sender = _info.sender;
-            //    var s0 = _sender.i("margin-left");
-            //    var dt = this._footPrint[1].t - this._footPrint[0].t;
-            //    var v0 = dt == 0 ? 0 : (this._footPrint[1].x - this._footPrint[0].x) / dt;
-            //    var unit = sender.children().width();
-            //    var index = s0 / unit;
-
-            //    _sender.climb({
-            //        css: "margin-left",
-            //        x1: Math.floor(index) * unit,
-            //        x2: Math.ceil(index) * unit,
-            //        s0: s0,
-            //        v0: v0,
-            //        complete: function (v)
-            //        {
-            //            var parent = _sender.parents("div.showcase");
-            //            var category = parent.attr("category");
-            //            var i = v < 0 ? Math.floor(1 - index) : Math.ceil(-1 - index);
-            //            parent.parent().children("ol[category='" + category + "']").children().removeClass("active").eq(i).addClass("active");
-            //        }
-            //    });
-            //}
-
-            //this._touchInfo = null;
         },
         _keyPress: function (sender, event)
         {
-            switch (sender.attr("for"))
+            switch (sender.attr("tag"))
             {
                 case "search":
                     if (event.keyCode == 13 && !sender.hasClass("empty")) { this._search(sender.val()); }
@@ -184,7 +113,7 @@
         },
         _change: function (sender, event)
         {
-            switch (sender.attr("for"))
+            switch (sender.attr("tag"))
             {
                 case "search":
                     if (sender.val().length == 0) { sender.parent(".filled").removeClass("filled"); }
@@ -196,55 +125,53 @@
         {
             alert(keywords);
         },
-        _clearKeywords: function ()
+        _clear: function (sender, event)
         {
-            $("input.keywords").val("").blur().parent().removeClass("filled");
+            $("div#header input.keywords").val("").blur().parent().removeClass("filled");
         },
         _back: function (sender, event)
         {
             var _this = this;
-            var indexed = $("div.partial[index]");
+            var header = $("div#header");
+            var main = $("div#main");
+            var indexed = main.children("div.partial");
             var visible = indexed.filter(":visible");
             var index = i(visible.attr("index"));
             var previous = isNaN(index) ? indexed.last().show() : indexed.filter("[index=" + (index - 1) + "]").show();
             var previousIndex = i(previous.attr("index"));
-            var width = $(window).width();
-            var body = $(document.body).addClass("loading");
-            var header = $("div#header");
+            var width = main.width();
             var h1 = header.children("h1:visible");
             var back = header.children("a.back:visible");
             var name = previous.attr("name");
             var title = previous.attr("title");
-            var h1New = header.children("h1.template").clone().removeClass("template").text(title);
+            var h1Template = header.children("h1.template");
+            var h1New = h1Template.clone().removeClass("template").text(title);
             var loading = $("div#loading").hide();
             var h1MarginLeft = h1New.i("margin-left");
             var backMarginLeft = back.i("margin-left");
             var duration = 500;
 
-            h1.animate({ marginLeft: $(window).width() - h1New.r("width", 0.5), opacity: 0 }, duration, function () { $(this).remove(); });
-            back.animate({ marginLeft: i(0.5 * ($(window).width() - back.outerWidth())), opacity: 0 }, duration, function () { $(this).remove(); });
-            h1New.css({ opacity: 0 }).prependTo(header).css({ marginLeft: -h1.r("width", 0.5) - backMarginLeft }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
+            h1.animate({ marginLeft: width - h1New.r("width", 0.5), opacity: 0 }, duration, function () { $(this).remove(); });
+            back.animate({ marginLeft: i(0.5 * (width - back.outerWidth())), opacity: 0 }, duration, function () { $(this).remove(); });
+            h1New.css({ opacity: 0 }).css({ marginLeft: -h1.r("width", 0.5) - backMarginLeft }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
+            h1Template.after(h1New);
 
             if (previousIndex >= 1)
             {
                 var earlier = indexed.filter("[index=" + (previousIndex - 1) + "]");
-                var earlierName = earlier.attr("name");
-                var earlierTitle = earlier.attr("title");
-                var backNew = header.children("a.back.template").clone().removeClass("template").text(earlierTitle);
-                backNew.css({ opacity: 0 }).prependTo(header).css({ marginLeft: -0.5 * ($(window).width()) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
+                var backTemplate = header.children("a.back.template");
+                var backNew = backTemplate.clone().removeClass("template").text(earlier.attr("title"));
+
+                backNew.css({ opacity: 0 }).css({ marginLeft: -0.5 * width }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
+                backTemplate.after(backNew);
             }
 
-            previous.animate({ marginLeft: 0 }, {
-                duration: duration,
-                step: function (current)
-                {
-                    visible.css({ marginLeft: width + current, width: -current });
-                },
-                complete: function ()
-                {
-                    visible.remove();
-                    body.removeClass("loading");
-                }
+            visible.css({ left: width });
+            previous.css({ left: 0 });
+
+            main.scrollLeft(width).animate({ scrollLeft: 0 }, duration, function ()
+            {
+                visible.remove();
             });
         },
         _open: function (sender, event)
@@ -255,23 +182,31 @@
             }
 
             var _this = this;
+            var header = $("div#header");
+            var main = $("div#main");
             var name = sender.attr("name");
             var title = sender.attr("title");
-            var indexed = $("div.partial[index]");
-            var header = $("div#header");
-            var body = $(document.body).addClass("loading");
+            var indexed = main.children("div.partial");
+            var visible = indexed.filter(":visible");
             var h1 = header.children("h1:visible");
             var back = header.children("a.back:visible");
-            var h1New = header.children("h1.template").clone().removeClass("template").text(title);
-            var backNew = header.children("a.back.template").clone().removeClass("template").text(indexed.last().attr("title"));
+            var h1Template = header.children("h1.template");
+            var h1New = h1Template.clone().removeClass("template").text(title);
+            var partialTemplate = $("div.partial.template");
+            var partialNew = $("<div>").addClass("partial");
             var loading = $("div#loading").hide();
+            var width = main.width();
+
+            visible.css({ left: 0 });
+            main.children("div.partial[name='" + name + "']").remove();
+            partialNew.attr({ index: indexed.length, name: name, style: partialTemplate.attr("style"), tag: "partial", title: title });
+            partialNew.appendTo(main);
 
             var complete = function (json)
             {
                 if (json != undefined && loading.is(":visible"))
                 {
-                    _this._generatePartial(name, title, json);
-                    body.removeClass("loading");
+                    _this._generatePartial(partialNew, name, json);
                 }
 
                 loading.hide();
@@ -283,36 +218,40 @@
                 back.remove();
                 h1New.appendTo(header);
                 loading.show();
+                partialNew.css({ left: 0 });
 
                 this._loadPartial(this._getAjaxOptions(sender), complete);
                 return;
             }
 
             var duration = 500;
+            var backTemplate = header.children("a.back.template");
+            var backNew = backTemplate.clone().removeClass("template").text(visible.attr("title"));
             var h1MarginLeft = h1New.i("margin-left");
             var backMarginLeft = backNew.i("margin-left");
 
-            h1New.css({ opacity: 0 }).prependTo(header).css({ marginLeft: $(window).width() - h1New.r("width", 0.5) }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
-            backNew.css({ opacity: 0 }).prependTo(header).css({ marginLeft: i(0.5 * ($(window).width() - backNew.outerWidth())) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
             h1.animate({ marginLeft: -h1.r("width", 0.5) - backMarginLeft, opacity: 0 }, duration, function () { $(this).remove(); });
-            back.animate({ marginLeft: -0.5 * ($(window).width()) }, duration, function () { $(this).remove(); });
+            back.animate({ marginLeft: -0.5 * width }, duration, function () { $(this).remove(); });
+            h1New.css({ opacity: 0 }).css({ marginLeft: width - h1New.r("width", 0.5) }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
+            backNew.css({ opacity: 0 }).css({ marginLeft: i(0.5 * (width - backNew.outerWidth())) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
 
-            indexed.filter(":visible").animate({ marginLeft: -$(window).width() }, duration, function ()
+            h1Template.after(h1New);
+            backTemplate.after(backNew);
+            partialNew.css({ left: width });
+
+            main.animate({ scrollLeft: width }, duration, function ()
             {
-                $(this).hide();
+                visible.hide();
                 loading.show();
+                partialNew.css({ left: 0 });
+                $(this).scrollLeft(0);
 
                 _this._loadPartial(_this._getAjaxOptions(sender), complete);
             });
         },
         _validRequest: function (sender, event)
         {
-            if (sender.hasClass("item") && sender.attr("identity") == undefined)
-            {
-                return false;
-            }
-
-            return true;
+            return !(sender.hasClass("item") && sender.attr("identity") == undefined);
         },
         _loadPartial: function (options, callback)
         {
@@ -352,24 +291,23 @@
         {
             var options = { url: null, data: {} };
             var name = sender.attr("name");
-            var action = sender.attr("action");
-            var tagName = sender.get(0).tagName.toLowerCase();
+            var tag = sender.attr("tag");
 
-            switch (tagName + "-" + action)
+            switch (tag)
             {
-                case "a-menu":
+                case "menu":
                     options.url = config.urls.partial.replace(/(\/*)$/, "/") + name;
                     break;
-                case "a-topic":
-                    options.url = config.urls.partial.replace(/(\/*)$/, "/") + action;
+                case "topic":
+                    options.url = config.urls.partial.replace(/(\/*)$/, "/") + "topic";
                     options.data = { id: sender.attr("identity") };
                     break;
-                case "a-products":
-                    options.url = config.urls.partial.replace(/(\/*)$/, "/") + action;
+                case "seeall":
+                    options.url = config.urls.partial.replace(/(\/*)$/, "/") + "products";
                     options.data = { orderby: sender.attr("name") };
                     break;
-                case "div-product":
-                    options.url = config.urls.partial.replace(/(\/*)$/, "/") + action;
+                case "product":
+                    options.url = config.urls.partial.replace(/(\/*)$/, "/") + "product";
                     options.data = { id: sender.attr("identity") };
                     break;
             }
@@ -417,14 +355,16 @@
         {
             var header = $("div#header");
             var footer = $("div#footer");
+            var main = $("div#main");
             var loading = $("div#loading");
             var partial = $("div.partial");
 
             header.css({ height: i(width * 0.045), top: 0, width: width });
             footer.css({ height: i(width * 0.050), width: width }).css({ top: height - footer.height() });
+            main.css({ height: height - header.height() - footer.height(), left: 0, top: header.height(), width: width });
             loading.css({ fontSize: i(width * 0.0125) }).css({ borderRadius: loading.i("font-size", 0.5), padding: loading.i("font-size"), paddingLeft: loading.i("font-size", 3), width: loading.width() });
             loading.css({ "background-position-x": loading.i("font-size", 0.55), height: loading.i("font-size", 1.5) }).css({ lineHeight: loading.css("height"), left: i((width - loading.outerWidth()) * 0.5), top: i((height - loading.outerHeight()) * 0.5) });
-            partial.css({ height: height - header.height() - footer.height(), marginBottom: footer.height(), marginTop: header.height(), top: 0, width: width });
+            partial.css({ height: main.height(), width: main.width() });
 
             this._resizeHeader(header, header.width(), header.height()).show();
             this._resizeFooter(footer, footer.width(), footer.height()).show();
@@ -593,25 +533,15 @@
             sender.parents("ul.menu").find("a").removeClass("selected");
             sender.addClass("selected");
 
-            /*****important*****/
-            $("body").addClass("loading");
-            $("div.partial[index]").remove();
             $("div#header>div.search").css({ display: options.searchable ? "block" : "none" });
+            $("div#main").empty();
 
             var _this = this;
             setTimeout(function () { _this._open(sender, event); });
         },
-        _generatePartial: function (name, title, json)
+        _generatePartial: function (target, name, json)
         {
-            $("div.partial." + name).remove();
-
-            var _this = this;
-            var indexed = $("div.partial[index]");
             var template = $("div.partial.template");
-            var target = $("<div></div>").addClass("partial " + name).attr({ module: "partial", title: title });
-
-            target.attr({ index: indexed.length, name: name, style: template.attr("style") });
-            target.appendTo(document.body);
 
             switch (name)
             {
@@ -684,7 +614,7 @@
             var desc = template.find("p.showcase").clone().attr({ name: name });
             var navs = null, navItem = null;
 
-            var pages = div.children("ul").attr({ module: "showcase" });
+            var pages = div.children("ul").attr({ tag: "showcase" });
             var pageItem = pages.children("li:first").clone();
             var productItem = pageItem.children("div.item:first").clone();
 

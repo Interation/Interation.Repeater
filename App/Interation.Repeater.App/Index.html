@@ -5,37 +5,50 @@
     <meta charset="utf-8" />
     <link href="css/index.css" rel="stylesheet" />
 </head>
-<body class="loading">
+<body>
     <div id="header" style="display:none;">
-        <a class="back template" href="javascript:void(0);">
-        </a>
+        <a class="back template" href="javascript:void(0);"></a>
         <h1 class="template"></h1>
         <div class="search">
-            <input action="search" autocapitalize="off" autocorrect="off" class="keywords" type="search" />
+            <input autocapitalize="off" autocorrect="off" class="keywords" tag="search" type="search" />
             <a class="clear" href="javascript:void(0);"></a>
         </div>
     </div>
+    
+    <div id="main">
+
+    </div>
+
+    <div id="footer" style="display:none;">
+        <ul class="menu">
+            <li><a class="menu" href="javascript:void(0);" tag="menu"></a></li>
+        </ul>
+    </div>
+    
+    <div id="loading" style="display:none;">
+        Loading...
+    </div>
 
     <div class="partial template">
-        <a action="topic" class="topic banner" href="javascript:void(0);" name="topic">
+        <a class="topic banner" href="javascript:void(0);" name="topic" tag="topic">
             <img alt="" src="#" />
         </a>
         <ul class="loop">
             <li>
-                <a action="topic" class="topic" href="javascript:void(0);" name="topic">
+                <a class="topic" href="javascript:void(0);" name="topic" tag="topic">
                     <img alt="" src="#" />
                 </a>
             </li>
         </ul>
         <h2 class="showcase">
             <span></span>
-            <a action="products" class="chart" href="javascript:void(0);">See All &gt;</a>
+            <a class="chart" href="javascript:void(0);" tag="seeall">See All &gt;</a>
             <label></label>
         </h2>
         <div class="showcase">
             <ul class="showcase">
                 <li>
-                    <div action="product" class="item" onclick="javascript:void(0);" name="product">
+                    <div class="item" onclick="javascript:void(0);" name="product" tag="product">
                         <div class="icon">
                             <img alt="" src="#" />
                             <span class="type"></span>
@@ -106,16 +119,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div id="footer" style="display:none;">
-        <ul class="menu">
-            <li><a action="menu" class="menu" href="javascript:void(0);"></a></li>
-        </ul>
-    </div>
-    
-    <div id="loading" style="display:none;">
-        Loading...
     </div>
 
     <script src="js/cordova-2.5.0.js"></script>
