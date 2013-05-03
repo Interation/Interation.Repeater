@@ -3,16 +3,17 @@
 <head>
     <title>iRepeater App</title>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link href="css/index.css" rel="stylesheet" />
 </head>
 <body>
     <div id="header" style="display:none;">
         <a class="back template" href="javascript:void(0);"></a>
         <h1 class="template"></h1>
-        <div class="search">
-            <input autocapitalize="off" autocorrect="off" class="keywords" tag="search" type="search" />
+        <form action="#" class="search">
+            <input autocapitalize="off" class="keywords" tag="search" title="Search" type="search" />
             <a class="clear" href="javascript:void(0);"></a>
-        </div>
+        </form>
     </div>
     
     <div id="main">
@@ -29,17 +30,19 @@
         Loading...
     </div>
 
-    <div class="partial template">
-        <a class="topic banner" href="javascript:void(0);" name="topic" tag="topic">
-            <img alt="" src="#" />
-        </a>
-        <ul class="loop">
-            <li>
-                <a class="topic" href="javascript:void(0);" name="topic" tag="topic">
-                    <img alt="" src="#" />
-                </a>
-            </li>
-        </ul>
+    <div class="partial template" style="display:none;">
+        <div class="banner">
+            <a class="display" href="javascript:void(0);" name="topic" tag="topic">
+                <img alt="" src="#" />
+            </a>
+            <ul class="loop">
+                <li>
+                    <a href="javascript:void(0);" name="topic" tag="topic">
+                        <img alt="" src="#" />
+                    </a>
+                </li>
+            </ul>
+        </div>
         <h2 class="showcase">
             <span></span>
             <a class="chart" href="javascript:void(0);" tag="seeall">See All &gt;</a>

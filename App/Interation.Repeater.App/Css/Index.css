@@ -12,6 +12,7 @@ html ul, ol, li { border:none; list-style:none; margin:0px; padding:0px; }
 html img { border:none; }
 html input { -webkit-tap-highlight-color:transparent; border:none; }
 html input:focus { -webkit-tap-highlight-color:transparent; -webkit-user-modify: read-write-plaintext-only; }
+html form { border:none; margin:0px; padding:0px; }
 
 .clear { clear:both; font-size:0px; height:0px; overflow:hidden; width:0px; }
 
@@ -22,11 +23,11 @@ div#header a.back { background-image:url(../images/back-center.png),url(../image
 div#header a.back { background-clip:content-box,border-box,border-box; background-origin:padding-box,border-box,border-box; background-position:center,left,right; background-repeat:repeat-x,no-repeat,no-repeat; background-size:auto 100%,auto 100%,auto 100%; }
 div#header a.back { border:solid transparent 0px; color:#ffffff; display:block; float:left; font-weight:bold; margin:0px; min-width:30px; overflow:hidden; padding:0px; position:absolute; text-align:center; text-shadow:-1px -1px #333333; top:0px; }
 div#header a.back.template { display:none; }
-div#header div.search { background:#ffffff url(../images/search.png) no-repeat left center; background-size:auto 100%; position:absolute; top:0; }
-div#header div.search input.keywords { background:transparent; float:left; padding:0px; width:150px; }
-div#header div.search input.empty { color:#cccccc; }
-div#header div.search a.clear { background:url(../images/clear.png) no-repeat; background-size:100% 100%; clear:none; display:none; float:left; }
-div#header div.search.filled a.clear { display:block; }
+div#header form.search { background:#ffffff url(../images/search.png) no-repeat left center; background-size:auto 100%; display:block; position:absolute; top:0; }
+div#header form.search input.keywords { background:transparent; float:left; padding:0px; width:150px; }
+div#header form.search input.empty { color:#cccccc; }
+div#header form.search a.clear { background:url(../images/clear.png) no-repeat; background-size:100% 100%; clear:none; display:none; float:left; }
+div#header form.search.filled a.clear { display:block; }
 
 div#footer { background:#000000 url(../images/footerbackground.jpg) repeat-x; background-size:auto 100%; position:fixed; width:100%; z-index:1; }
 div#footer ul.menu { margin:0px auto; height:100%; }
@@ -35,16 +36,17 @@ div#footer ul.menu>li a { color:rgba(255,255,255,0.75); display:block; font-weig
 div#footer ul.menu>li a:hover { background:rgba(255,255,255,0.025); }
 div#footer ul.menu>li a.selected { background:rgba(255,255,255,0.1); }
 
-div#main { -webkit-overflow-scrolling:touch; overflow-x:scroll; overflow-y:hidden; position:absolute; }
+div#main { -webkit-overflow-scrolling:touch; overflow-x:hidden; overflow-y:auto; position:absolute; }
 div#loading { background:#cbcbcb url(../images/loading-indicator.gif) no-repeat left center; background-size:auto 50%; font-weight:bold; position:absolute; text-shadow:1px 1px #dddddd; }
 
 div.partial { -webkit-overflow-scrolling:touch; background:#cbcbcb; float:left; overflow-x:hidden; overflow-y:scroll; position:absolute; }
-div.partial a.banner { background:#8a2529; float:left; overflow:hidden; }
-div.partial a.banner img { height:100%; width:100%; }
-div.partial ul.loop { -webkit-overflow-scrolling:touch; background:#8a2529; float:left; overflow:hidden; }
-div.partial ul.loop li { overflow:hidden; }
-div.partial ul.loop a { display:block; float:left; height:100%; width:100%; }
-div.partial ul.loop img { height:100%; width:100%; }
+div.partial div.banner { overflow:hidden; }
+div.partial div.banner a.display { display:block; float:left; overflow:hidden; }
+div.partial div.banner a.display img { height:100%; width:100%; }
+div.partial div.banner ul.loop { -webkit-overflow-scrolling:touch; float:left; overflow-x:hidden; overflow-y:scroll; }
+div.partial div.banner ul.loop li { overflow:hidden; width:100%; }
+div.partial div.banner ul.loop a { display:block; height:100%; width:100%; }
+div.partial div.banner ul.loop img { height:100%; width:100%; }
 div.partial h2 { position:relative; text-shadow:1px 1px #d8d8d8; }
 div.partial *.showcase { color:#222222; }
 div.partial *.showcase a { color:#222222; }

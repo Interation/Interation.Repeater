@@ -11,29 +11,33 @@
         {
             var _this = this;
 
+            $(document).bind("touchstart", function (event) { event.preventDefault(); });
+
             this._generateMenu(config.partials);
             this._resizePage($(window).width(), $(window).height());
 
-            $(document).bind("touchend", function (event) { _this._touchEnd($(this), event); })
+            $(document).unbind("touchstart")
+                       .bind("touchend", function (event) { _this._touchEnd($(this), event); })
                        .bind("touchcancel", function (event) { _this._touchEnd($(this), event); })
-                       .bind("touchmove", function (event) { _this._touchMove($(this), event); event.preventDefault(); });
+                       .bind("touchmove", function (event) { _this._touchMove($(this), event); });
 
-            $("div#header input.keywords").watermark("Search")
-                                          .focus(function (event) { $(this).select(); })
-                                          .keypress(function (event) { _this._keyPress($(this), event); })
-                                          .bind("input", function (event) { _this._change($(this), event); });
 
+            $("div#header").bind("touchmove", function () { event.preventDefault(); });
             $("div#header a.back").live("click", function (event) { _this._back($(this), event); });
-            $("div#header div.search a.clear").live("click", function (event) { _this._clear($(this), event); });
+            $("div#header form.search").live("submit", function (event) { _this._search($(this), event); event.preventDefault(); });
+            $("div#header form.search a.clear").live("click", function (event) { _this._clear($(this), event); });
+            $("div#header form.search input.keywords").watermark("Search")
+                                                      .focus(function (event) { $(this).select(); })
+                                                      .bind("input", function (event) { _this._change($(this), event); });
 
-            $("div.partial").live("touchstart", function (event) { _this._touchStart($(this), event); });
-            $("div.partial div.showcase ul").live("touchstart", function (event) { _this._touchStart($(this), event); });
-            $("div.partial h2.showcase a").live("click", function (event) { _this._open($(this), event); });
-            $("div.partial ul.showcase div.item").live("click", function (event) { _this._open($(this), event); });
-            $("div.partial a.topic").live("click", function (event) { _this._open($(this), event); });
-            $("div.partial a.price").live("click", function (event) { _this._download($(this), event); return false; });
-            $("div.partial div.detail a.more").live("click", function (event) { _this._toggleMore($(this), event); });
+            $("div#main div.banner a").live("click", function (event) { _this._open($(this), event); });
+            $("div#main h2.showcase a").live("click", function (event) { _this._open($(this), event); });
+            $("div#main div.showcase ul").live("touchstart", function (event) { _this._touchStart($(this), event); });
+            $("div#main div.showcase div.item").live("click", function (event) { _this._open($(this), event); });
+            $("div#main div.showcase a.price").live("click", function (event) { _this._download($(this), event); return false; });
+            $("div#main div.detail a.more").live("click", function (event) { _this._toggleMore($(this), event); });
 
+            $("div#footer").bind("touchmove", function () { event.preventDefault(); });
             $("div#footer ul.menu a").live("click", function (event) { _this._selectMenu($(this), event, this.options); }).eq(0).click();
         },
         _touchStart: function (sender, event)
@@ -56,12 +60,6 @@
 
             switch (tag)
             {
-                case "partial":
-                    args.value = sender.scrollTop();
-                    args.minimum = 0;
-                    args.maximum = sender.get(0).scrollHeight - sender.height();
-                    args.maximum = args.maximum < args.minimum ? args.minimum : args.maximum;
-                    break;
                 case "showcase":
 
                     break;
@@ -92,10 +90,12 @@
                 this._footPrint = [{ t: start.time, x: start.pageX, y: start.pageY }, { t: Date.now(), x: event.pageX, y: event.pageY }];
             }
 
-            if (this._touchInfo.partial != undefined)
+            if (this._touchInfo.showcase != undefined && this._touchInfo.vertical)
             {
-                var args = this._touchInfo.partial;
-                args.sender.scrollTop(args.value - touch.pageY + start.pageY);
+                var args = this._touchInfo.showcase;
+                //args.sender.scrollTop(args.value - touch.pageY + start.pageY);
+
+                event.preventDefault();
             }
         },
         _touchEnd: function (sender, event)
@@ -121,16 +121,15 @@
                     break;
             }
         },
-        _search: function (keywords)
-        {
-            alert(keywords);
-        },
         _clear: function (sender, event)
         {
             $("div#header input.keywords").val("").blur().parent().removeClass("filled");
         },
         _back: function (sender, event)
         {
+            if (this.__togglingPartial) { return; }
+            else { this.__togglingPartial = true; }
+
             var _this = this;
             var header = $("div#header");
             var main = $("div#main");
@@ -171,15 +170,16 @@
 
             main.scrollLeft(width).animate({ scrollLeft: 0 }, duration, function ()
             {
+                _this.__togglingPartial = false;
                 visible.remove();
             });
         },
         _open: function (sender, event)
         {
-            if (!this._validRequest(sender, event))
-            {
-                return;
-            }
+            if (!this._validRequest(sender, event)) { return; }
+
+            if (this.__togglingPartial) { return; }
+            else { this.__togglingPartial = true; }
 
             var _this = this;
             var header = $("div#header");
@@ -200,7 +200,7 @@
             visible.css({ left: 0 });
             main.children("div.partial[name='" + name + "']").remove();
             partialNew.attr({ index: indexed.length, name: name, style: partialTemplate.attr("style"), tag: "partial", title: title });
-            partialNew.appendTo(main);
+            partialNew.show().appendTo(main);
 
             var complete = function (json)
             {
@@ -220,6 +220,7 @@
                 loading.show();
                 partialNew.css({ left: 0 });
 
+                this.__togglingPartial = false;
                 this._loadPartial(this._getAjaxOptions(sender), complete);
                 return;
             }
@@ -246,12 +247,17 @@
                 partialNew.css({ left: 0 });
                 $(this).scrollLeft(0);
 
+                _this.__togglingPartial = false;
                 _this._loadPartial(_this._getAjaxOptions(sender), complete);
             });
         },
         _validRequest: function (sender, event)
         {
             return !(sender.hasClass("item") && sender.attr("identity") == undefined);
+        },
+        _search: function (keywords)
+        {
+            alert(keywords);
         },
         _loadPartial: function (options, callback)
         {
@@ -353,11 +359,12 @@
         },
         _resizePage: function (width, height)
         {
-            var header = $("div#header");
-            var footer = $("div#footer");
-            var main = $("div#main");
-            var loading = $("div#loading");
-            var partial = $("div.partial");
+            var body = $(document.body);
+            var header = body.children("div#header");
+            var footer = body.children("div#footer");
+            var main = body.children("div#main");
+            var loading = body.children("div#loading");
+            var partial = body.children("div.partial");
 
             header.css({ height: i(width * 0.045), top: 0, width: width });
             footer.css({ height: i(width * 0.050), width: width }).css({ top: height - footer.height() });
@@ -374,9 +381,9 @@
         {
             var h1 = header.children("h1");
             var back = header.children("a.back");
-            var search = header.children("div.search");
-            var keywords = search.children("input.keywords");
-            var searchClear = search.children("a.clear");
+            var search = header.children("form.search");
+            var keywords = search.find("input.keywords");
+            var searchClear = search.find("a.clear");
 
             h1.css({ fontSize: i(height * 0.42), height: height, lineHeight: height + "px", width: i(width * 0.25) }).css({ marginLeft: i(0.5 * (width - h1.width())) });
             back.css({ fontSize: i(height * 0.28), height: i(height * 0.7), marginLeft: r(width * 0.016) });
@@ -391,7 +398,7 @@
         },
         _resizeFooter: function (footer, width, height)
         {
-            var menu = footer.find("ul.menu");
+            var menu = footer.children("ul.menu");
             var menuItems = menu.children("li");
             var anchors = menuItems.children("a");
 
@@ -407,27 +414,34 @@
         },
         _resizePartial: function (partial, width)
         {
-            var banner = partial.find("a.banner");
-            var loop = partial.find("ul.loop");
-            var loopList = loop.children();
-            var superlink = partial.find("div.superlink");
-            var showcase = partial.find(".showcase");
-            var quickLink = partial.find(".quicklink");
-            var detail = partial.find("div.detail");
+            var banner = partial.children("div.banner");
+            var showcase = partial.children("*.showcase");
+            var quickLink = partial.children("*.quicklink");
+            var superlink = partial.children("div.superlink");
+            var detail = partial.children("div.detail");
 
-            var radius = r(width * 0.005);
-            var grid = { height: i(width * 0.1), width: i(width * 0.242) };
+            var grid = { height: i(width * 0.1), width: i(width * 0.2416) };
             var margin = i((width - 4 * grid.width) * 0.5);
 
-            banner.css({ "border-bottom-left-radius": radius, "border-top-left-radius": radius, height: 3 * grid.height, marginLeft: margin, marginTop: margin, width: 3 * grid.width });
-            loop.css({ "border-bottom-right-radius": radius, "border-top-right-radius": radius, height: 3 * grid.height, marginRight: margin, marginTop: margin, width: grid.width });
-            loopList.css({ height: grid.height, width: "100%" });
+            banner.css({ boxShadow: this._getShadow(width * 0.003, width * 0.003, width * 0.012, "rgba(0,0,0,0.35)") });
+            banner.css({ height: 3 * grid.height, margin: margin, width: 4 * grid.width });
             superlink.css({ fontSize: i(width * 0.013), lineHeight: 2.5, paddingTop: i(width * 0.025), width: width });
             detail.css({ width: width });
 
+            this._resizeBanner(banner, width, grid, margin);
             this._resizeShowcase(showcase, width, margin);
             this._resizeQuickLink(quickLink, width, margin);
-            this._resizeProductPage(detail, width, margin);
+            this._resizeDetail(detail, width, margin);
+        },
+        _resizeBanner: function (banner, width, grid, margin)
+        {
+            var display = banner.children("a.display");
+            var loop = banner.children("ul.loop");
+            var loopList = loop.children("li");
+
+            display.css({ height: 3 * grid.height, width: 3 * grid.width });
+            loop.css({ height: 3 * grid.height, width: grid.width });
+            loopList.css({ height: grid.height });
         },
         _resizeShowcase: function (showcase, width, margin)
         {
@@ -494,7 +508,7 @@
             links.css({ fontSize: i(width * 0.016), lineHeight: 2.8, marginTop: margin });
             linkList.css({ width: div.i("width", 1 / 3) });
         },
-        _resizeProductPage: function (detail, width, margin)
+        _resizeDetail: function (detail, width, margin)
         {
             var left = detail.children("div.left");
             var icon = left.children("div.icon");
@@ -533,7 +547,7 @@
             sender.parents("ul.menu").find("a").removeClass("selected");
             sender.addClass("selected");
 
-            $("div#header>div.search").css({ display: options.searchable ? "block" : "none" });
+            $("div#header>form.search").css({ display: options.searchable ? "block" : "none" });
             $("div#main").empty();
 
             var _this = this;
@@ -559,7 +573,7 @@
                     this._generateShowcase(target, template, json.Products, 12, name);
                     break;
                 case "product":
-                    this._generateProductPage(target, template, json);
+                    this._generateDetail(target, template, json);
                     break;
             }
 
@@ -570,30 +584,28 @@
         },
         _generateBanner: function (target, template, array)
         {
-            var loop = template.find("ul.loop").clone();
-            var li = loop.children(":first").clone();
-            var banner = template.find("a.banner").clone();
-            var clear = this._generateClear("div");
+            var banner = template.children("div.banner").clone();
+            var display = banner.children("a.display");
+            var loop = banner.children("ul.loop");
+            var loopItem = loop.children("li").remove().first();
 
             banner.appendTo(target);
-            loop.empty().appendTo(target);
-            clear.appendTo(target);
 
             $.each(array, function (i, json)
             {
-                var item = li.clone().appendTo(loop);
-                item.find("a.topic").attr({ identity: json.Id, title: json.Name }).find("img").attr({ src: json.ImageUrl });
+                var item = loopItem.clone().appendTo(loop);
+                item.find("a").attr({ identity: json.Id, title: json.Name }).find("img").attr({ src: json.ImageUrl });
             });
 
             var count = loop.children().length;
-            var scrollTop = (count - 3) * li.height();
-            var animateScrollTop = (count - 4) * li.height();
+            var scrollTop = (count - 4) * loopItem.height();
+            var animateScrollTop = (count - 5) * loopItem.height();
 
             var animate = function ()
             {
                 var li = loop.children();
-                var lastLink = li.last().find("a.topic");
-                banner.attr({ identity: lastLink.attr("identity"), title: lastLink.attr("title") }).find("img").attr("src", lastLink.find("img").attr("src"));
+                var lastLink = li.last().find("a");
+                display.attr({ identity: lastLink.attr("identity"), title: lastLink.attr("title") }).find("img").attr("src", lastLink.find("img").attr("src"));
                 li.first().before(li.last().remove());
                 loop.scrollTop(scrollTop);
 
@@ -692,7 +704,7 @@
         {
             template.find("div.superlink").clone().appendTo(target);
         },
-        _generateProductPage: function (target, template, json)
+        _generateDetail: function (target, template, json)
         {
             var detail = template.find("div.detail").clone();
             var left = detail.children("div.left");
