@@ -19,6 +19,9 @@ namespace Interation.Repeater.Api.ViewModel
         public float Star { get; set; }
         public int ScrollingNumber { get; set; }
         public int Downloads { get; set; }
+        public List<ProductPosterViewModel> Posters { get; set; }
+        public List<ProductRatingViewModel> Ratings { get; set; }
+        public Dictionary<string, int> StatisticalRating { get; set; }
         public List<string> Descriptions { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }

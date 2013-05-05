@@ -39,7 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommentService.cs" />
+    <Compile Include="Extensions\ComplexCommentExtension.cs" />
     <Compile Include="Extensions\ProductExtension.cs" />
+    <Compile Include="Extensions\ProductPosterExtension.cs" />
+    <Compile Include="Extensions\ProductRatingExtension.cs" />
     <Compile Include="Extensions\TopicExtension.cs" />
     <Compile Include="ProductService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

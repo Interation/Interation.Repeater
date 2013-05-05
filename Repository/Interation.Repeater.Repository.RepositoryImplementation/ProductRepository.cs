@@ -16,6 +16,22 @@ namespace Interation.Repeater.Repository.RepositoryImplementation
             }
         }
 
+        public List<ProductPoster> GetProductPosters(int productId)
+        {
+            using (var db = new RepeaterDbContext())
+            {
+                return db.ProductPosters.Where(refer => refer.ProductId == productId).ToList();
+            }
+        }
+
+        public List<ProductRating> GetProductRatings(int productId)
+        {
+            using (var db = new RepeaterDbContext())
+            {
+                return db.ProductRatings.Where(refer => refer.ProductId == productId).ToList();
+            }
+        }
+
         public List<Product> GetNewest(int count)
         {
             using (var db = new RepeaterDbContext())

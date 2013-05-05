@@ -21,7 +21,6 @@
                        .bind("touchcancel", function (event) { _this._touchEnd($(this), event); })
                        .bind("touchmove", function (event) { _this._touchMove($(this), event); });
 
-
             $("div#header").bind("touchmove", function () { event.preventDefault(); });
             $("div#header a.back").live("click", function (event) { _this._back($(this), event); });
             $("div#header form.search").live("submit", function (event) { _this._search($(this), event); event.preventDefault(); });
@@ -125,6 +124,84 @@
         {
             $("div#header input.keywords").val("").blur().parent().removeClass("filled");
         },
+        _open: function (sender, event)
+        {
+            if (!this._validRequest(sender, event)) { return; }
+
+            if (this.__togglingPartial) { return; }
+            else { this.__togglingPartial = true; }
+
+            var _this = this;
+            var header = $("div#header");
+            var main = $("div#main");
+            var name = sender.attr("name");
+            var title = sender.attr("title");
+            var indexed = main.children("div.partial");
+            var visible = indexed.filter(":visible");
+            var h1 = header.children("h1:visible");
+            var back = header.children("a.back:visible");
+            var h1Template = header.children("h1.template");
+            var h1New = h1Template.clone().removeClass("template").text(title);
+            var partialTemplate = $("div.partial.template");
+            var partialNew = $("<div>").addClass("partial");
+            var wrapper = partialTemplate.children("div.wrapper").clone().empty();
+            var loading = $("div#loading").hide();
+            var width = main.width();
+
+            visible.css({ left: 0 });
+            main.children("div.partial[name='" + name + "']").remove();
+            partialNew.attr({ index: indexed.length, name: name, style: partialTemplate.attr("style"), tag: "partial", title: title });
+            partialNew.append(wrapper).appendTo(main).show();
+
+            var complete = function (json)
+            {
+                if (json != undefined && loading.is(":visible"))
+                {
+                    _this._generatePartial(wrapper, name, json);
+                }
+
+                loading.hide();
+            };
+
+            if (indexed.length <= 0)
+            {
+                h1.remove();
+                back.remove();
+                h1New.appendTo(header);
+                loading.show();
+                partialNew.css({ left: 0 });
+
+                this.__togglingPartial = false;
+                this._loadPartial(this._getAjaxOptions(sender), complete);
+                return;
+            }
+
+            var duration = 500;
+            var backTemplate = header.children("a.back.template");
+            var backNew = backTemplate.clone().removeClass("template").text(visible.attr("title"));
+            var h1MarginLeft = h1New.i("margin-left");
+            var backMarginLeft = backNew.i("margin-left");
+
+            h1.animate({ marginLeft: -h1.r("width", 0.5) - backMarginLeft, opacity: 0 }, duration, function () { $(this).remove(); });
+            back.animate({ marginLeft: -0.5 * width }, duration, function () { $(this).remove(); });
+            h1New.css({ opacity: 0 }).css({ marginLeft: width - h1New.r("width", 0.5) }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
+            backNew.css({ opacity: 0 }).css({ marginLeft: i(0.5 * (width - backNew.outerWidth())) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
+
+            h1Template.after(h1New);
+            backTemplate.after(backNew);
+            partialNew.css({ left: width });
+
+            main.animate({ scrollLeft: width }, duration, function ()
+            {
+                visible.hide();
+                loading.show();
+                partialNew.css({ left: 0 });
+                $(this).scrollLeft(0);
+
+                _this.__togglingPartial = false;
+                _this._loadPartial(_this._getAjaxOptions(sender), complete);
+            });
+        },
         _back: function (sender, event)
         {
             if (this.__togglingPartial) { return; }
@@ -174,83 +251,6 @@
                 visible.remove();
             });
         },
-        _open: function (sender, event)
-        {
-            if (!this._validRequest(sender, event)) { return; }
-
-            if (this.__togglingPartial) { return; }
-            else { this.__togglingPartial = true; }
-
-            var _this = this;
-            var header = $("div#header");
-            var main = $("div#main");
-            var name = sender.attr("name");
-            var title = sender.attr("title");
-            var indexed = main.children("div.partial");
-            var visible = indexed.filter(":visible");
-            var h1 = header.children("h1:visible");
-            var back = header.children("a.back:visible");
-            var h1Template = header.children("h1.template");
-            var h1New = h1Template.clone().removeClass("template").text(title);
-            var partialTemplate = $("div.partial.template");
-            var partialNew = $("<div>").addClass("partial");
-            var loading = $("div#loading").hide();
-            var width = main.width();
-
-            visible.css({ left: 0 });
-            main.children("div.partial[name='" + name + "']").remove();
-            partialNew.attr({ index: indexed.length, name: name, style: partialTemplate.attr("style"), tag: "partial", title: title });
-            partialNew.show().appendTo(main);
-
-            var complete = function (json)
-            {
-                if (json != undefined && loading.is(":visible"))
-                {
-                    _this._generatePartial(partialNew, name, json);
-                }
-
-                loading.hide();
-            };
-
-            if (indexed.length <= 0)
-            {
-                h1.remove();
-                back.remove();
-                h1New.appendTo(header);
-                loading.show();
-                partialNew.css({ left: 0 });
-
-                this.__togglingPartial = false;
-                this._loadPartial(this._getAjaxOptions(sender), complete);
-                return;
-            }
-
-            var duration = 500;
-            var backTemplate = header.children("a.back.template");
-            var backNew = backTemplate.clone().removeClass("template").text(visible.attr("title"));
-            var h1MarginLeft = h1New.i("margin-left");
-            var backMarginLeft = backNew.i("margin-left");
-
-            h1.animate({ marginLeft: -h1.r("width", 0.5) - backMarginLeft, opacity: 0 }, duration, function () { $(this).remove(); });
-            back.animate({ marginLeft: -0.5 * width }, duration, function () { $(this).remove(); });
-            h1New.css({ opacity: 0 }).css({ marginLeft: width - h1New.r("width", 0.5) }).animate({ marginLeft: h1MarginLeft, opacity: 1 }, duration);
-            backNew.css({ opacity: 0 }).css({ marginLeft: i(0.5 * (width - backNew.outerWidth())) }).animate({ marginLeft: backMarginLeft, opacity: 1 }, duration);
-
-            h1Template.after(h1New);
-            backTemplate.after(backNew);
-            partialNew.css({ left: width });
-
-            main.animate({ scrollLeft: width }, duration, function ()
-            {
-                visible.hide();
-                loading.show();
-                partialNew.css({ left: 0 });
-                $(this).scrollLeft(0);
-
-                _this.__togglingPartial = false;
-                _this._loadPartial(_this._getAjaxOptions(sender), complete);
-            });
-        },
         _validRequest: function (sender, event)
         {
             return !(sender.hasClass("item") && sender.attr("identity") == undefined);
@@ -268,29 +268,47 @@
                 cache: false,
                 success: function (json)
                 {
-                    if (loadingIndex == _this.__loadingIndex)
+                    if (loadingIndex == _this.__loadPartialIndex)
                     {
-                        if (typeof callback == "function") { callback(json); }
+                        if ($.isFunction(callback)) { callback(json); }
                     }
                 },
                 error: function (response)
                 {
-                    if (loadingIndex == _this.__loadingIndex)
+                    if (loadingIndex == _this.__loadPartialIndex)
                     {
                         alert("Cannot connect to iRepeater Store");
                     }
                 },
                 complete: function ()
                 {
-                    if (loadingIndex == _this.__loadingIndex)
+                    if (loadingIndex == _this.__loadPartialIndex)
                     {
-                        if (typeof callback == "function") { callback(); }
+                        if ($.isFunction(callback)) { callback(json); }
                     }
                 }
             };
 
             var _this = this;
-            var loadingIndex = this.__loadingIndex = (this.__loadingIndex || 0) + 1;
+            var loadingIndex = this.__loadPartialIndex = (this.__loadPartialIndex || 0) + 1;
+            $.ajax(ajaxJson);
+        },
+        _loadComment: function (productId, callback)
+        {
+            var ajaxJson =
+            {
+                url: config.urls.comment,
+                data: { productId: productId },
+                cache: false,
+                success: function (json)
+                {
+                    if ($.isFunction(callback))
+                    {
+                        callback();
+                    }
+                }
+            };
+
             $.ajax(ajaxJson);
         },
         _getAjaxOptions: function (sender)
@@ -375,7 +393,7 @@
 
             this._resizeHeader(header, header.width(), header.height()).show();
             this._resizeFooter(footer, footer.width(), footer.height()).show();
-            this._resizePartial(partial, partial.width());
+            this._resizePartial(partial, partial.width(), partial.height());
         },
         _resizeHeader: function (header, width, height)
         {
@@ -412,8 +430,9 @@
 
             return footer;
         },
-        _resizePartial: function (partial, width)
+        _resizePartial: function (partial, width, height)
         {
+            var wrapper = partial.children("div.wrapper");
             var banner = partial.children("div.banner");
             var showcase = partial.children("*.showcase");
             var quickLink = partial.children("*.quicklink");
@@ -423,7 +442,8 @@
             var grid = { height: i(width * 0.1), width: i(width * 0.2416) };
             var margin = i((width - 4 * grid.width) * 0.5);
 
-            banner.css({ boxShadow: this._getShadow(width * 0.003, width * 0.003, width * 0.012, "rgba(0,0,0,0.35)") });
+            wrapper.css({ "min-height": height + 1, width: width });
+            banner.css({ boxShadow: this._getShadow(width * 0.006, width * 0.006, width * 0.02, "rgba(0,0,0,0.21)") });
             banner.css({ height: 3 * grid.height, margin: margin, width: 4 * grid.width });
             superlink.css({ fontSize: i(width * 0.013), lineHeight: 2.5, paddingTop: i(width * 0.025), width: width });
             detail.css({ width: width });
@@ -436,11 +456,13 @@
         _resizeBanner: function (banner, width, grid, margin)
         {
             var display = banner.children("a.display");
+            var displayImg = display.children("img");
             var loop = banner.children("ul.loop");
             var loopList = loop.children("li");
 
             display.css({ height: 3 * grid.height, width: 3 * grid.width });
-            loop.css({ height: 3 * grid.height, width: grid.width });
+            displayImg.css({ height: display.height(), width: display.width() });
+            loop.css({ width: grid.width });
             loopList.css({ height: grid.height });
         },
         _resizeShowcase: function (showcase, width, margin)
@@ -517,11 +539,11 @@
             var texts = left.children("p.text");
             var hr = left.children("hr");
             var right = detail.children("div.right");
-            var h3 = right.children("h3");
             var h2 = right.children("h2");
-            var ps = right.children("p");
+            var h3 = right.children("h3");
+            var h4 = right.children("h4");
+            var desc = right.children("p.desc");
             var more = right.find("a.more");
-            var screenshot = right.children("div.screenshot");
 
             left.css({ margin: margin, marginRight: 0, width: i(width * 0.2) });
             icon.css({ borderRadius: left.i("width", 0.075), height: left.width(), width: left.width() });
@@ -532,11 +554,51 @@
             texts.css({ fontSize: i(width * 0.012), lineHeight: 1.6 });
             hr.css({ margin: i(width * 0.005) + "px 0px" });
             right.css({ margin: margin, width: (width - left.width()) - 3 * margin });
-            h3.css({ fontSize: i(width * 0.015), height: i(width * 0.03) });
+            h3.css({ fontSize: i(width * 0.0125), height: i(width * 0.04) });
             h2.css({ fontSize: i(width * 0.02), height: i(width * 0.04) });
-            ps.css({ fontSize: i(width * 0.012), lineHeight: 1.5, margin: i(width * 0.012) + "px 0px" });
-            more.css({ fontSize: i(width * 0.012), height: i(width * 0.015), marginBottom: i(width * 0.012) }).css({ lineHeight: more.css("height"), paddingLeft: more.i("height", 1) });
-            screenshot.css({ border: "solid 1px rgba(0,0,0,0.35)", height: right.i("width", 0.5), width: right.width() - 2 });
+            h4.css({ fontSize: i(width * 0.0125), lineHeight: 1.5, margin: i(width * 0.025) + "px 0px " + i(width * 0.01) + "px" });
+            desc.css({ fontSize: i(width * 0.012), lineHeight: 1.5, margin: i(width * 0.012) + "px 0px" });
+            more.css({ fontSize: i(width * 0.012), height: i(width * 0.015), marginBottom: i(width * 0.012) });
+            more.css({ lineHeight: more.css("height"), paddingLeft: more.i("height", 1.3), paddingRight: more.i("height", 0.3) });
+            more.css({ "background-position-x": more.css("padding-right"), borderRadius: more.i("height", 0.3) });
+
+            this._resizeOthers(right, right.width());
+        },
+        _resizeOthers: function (right, width)
+        {
+            var poster = right.children("div.poster");
+            var posterWrapper = poster.children("div.wrapper");
+            var posterUl = posterWrapper.children("ul");
+            var posterLi = posterUl.children("li");
+            var rating = right.children("div.rating");
+            var ratingUl = rating.children("ul");
+            var ratingLi = ratingUl.children("li");
+            var ratingSpan = ratingLi.children("span");
+            var ratingSpanLeft = ratingSpan.filter(".left");
+            var ratingSpanRight = ratingSpan.filter(".right");
+            var ratingSpanBar = ratingSpanRight.filter(".bar");
+            var ratingRate = rating.children("div.rate");
+            var ratingWrapper = ratingRate.children("div.wrapper");
+            var ratingRateText = ratingWrapper.children("span");
+            var ratingRateHandler = ratingWrapper.children("label");
+
+            var ratingUnitHeight = i(width * 0.02);
+
+            poster.css({ border: "solid 1px rgba(0,0,0,0.35)", borderRadius: i(width * 0.01), height: right.i("width", 0.45), width: right.width() - 2 });
+            posterWrapper.css({ margin: poster.i("height", 0.05) }).css({ height: poster.height() - 2 * posterWrapper.i("margin-top"), width: poster.width() - 2 * posterWrapper.i("margin-top") });
+            posterUl.css({ height: posterWrapper.height() });
+            posterLi.css({ height: posterWrapper.height(), marginRight: posterWrapper.css("margin-left") });
+            rating.css({ height: 6 * ratingUnitHeight, width: width });
+            ratingUl.css({ "border-right-width": 1, fontSize: i(width * 0.015), height: rating.height(), width: i(width * 0.5) });
+            ratingLi.css({ height: ratingUnitHeight, width: ratingUl.width() });
+            ratingSpan.css({ lineHeight: ratingLi.css("height") });
+            ratingSpanLeft.css({ height: ratingLi.height(), width: ratingLi.i("height", 6) });
+            ratingSpanRight.css({ width: ratingLi.width() - ratingSpanLeft.i("width", 1.5) });
+            ratingSpanBar.css({ borderWidth: 1, margin: ratingLi.i("height", 0.18) + "px 0px" }).css({ height: ratingLi.height() - 2 * ratingSpanBar.i("margin-top") - 2 });
+            ratingRate.css({ "border-left-width": 1, height: rating.height(), width: width - ratingUl.width() - 2 });
+            ratingWrapper.css({ margin: ratingRate.i("height", 0.39) + "px auto" }).css({ height: ratingRate.height() - 2 * ratingWrapper.i("margin-top") });
+            ratingRateText.css({ fontSize: ratingWrapper.i("height", 0.7), height: ratingWrapper.height(), lineHeight: ratingWrapper.css("height") });
+            ratingRateHandler.css({ height: ratingWrapper.height(), width: ratingWrapper.height() * 7 });
         },
         _getShadow: function (x, y, range, color, inset)
         {
@@ -552,6 +614,51 @@
 
             var _this = this;
             setTimeout(function () { _this._open(sender, event); });
+        },
+        _setBannerAnimation: function (banner)
+        {
+            var display = banner.children("a.display");
+            var loop = banner.children("ul.loop");
+            var height = loop.children().height();
+            var length = loop.children().length;
+            var from = -(length - 3) * height;
+            var to = -(length - 4) * height;
+            var getCss = function (value)
+            {
+                return {
+                    "-webkit-transform": "translateY(" + value + "px)",
+                    "-ms-transform": "translateY(" + value + "px)",
+                    "transform": "translateY(" + value + "px)"
+                };
+            }
+
+            var animation = function ()
+            {
+                var last = loop.children().last();
+                var lastLink = last.children("a");
+                var offset = from;
+
+                var timer = setInterval(function ()
+                {
+                    offset += 2;
+
+                    if (offset >= to)
+                    {
+                        loop.css(getCss(from)).prepend(last.remove());
+                        display.attr({ identity: lastLink.attr("identity"), title: lastLink.attr("title") });
+                        display.find("img").attr({ src: lastLink.find("img").attr("src") });
+
+                        clearInterval(timer);
+                        setTimeout(animation, 10000);
+                    }
+                    else
+                    {
+                        loop.css(getCss(offset));
+                    }
+                }, 10);
+            };
+
+            animation();
         },
         _generatePartial: function (target, name, json)
         {
@@ -597,54 +704,31 @@
                 item.find("a").attr({ identity: json.Id, title: json.Name }).find("img").attr({ src: json.ImageUrl });
             });
 
-            var count = loop.children().length;
-            var scrollTop = (count - 4) * loopItem.height();
-            var animateScrollTop = (count - 5) * loopItem.height();
-
-            var animate = function ()
-            {
-                var li = loop.children();
-                var lastLink = li.last().find("a");
-                display.attr({ identity: lastLink.attr("identity"), title: lastLink.attr("title") }).find("img").attr("src", lastLink.find("img").attr("src"));
-                li.first().before(li.last().remove());
-                loop.scrollTop(scrollTop);
-
-                setTimeout(function ()
-                {
-                    loop.animate({ scrollTop: animateScrollTop }, 1000, animate);
-                }, 8000);
-            }
-
-            animate();
+            this._setBannerAnimation(banner);
         },
         _generateShowcase: function (target, template, array, pageSize, name, light)
         {
             var _this = this;
 
-            var head = template.find("h2.showcase").clone().attr({ name: name });
-            var div = template.find("div.showcase").clone().attr({ name: name });
-            var desc = template.find("p.showcase").clone().attr({ name: name });
-            var navs = null, navItem = null;
-
+            var head = template.find("h2.showcase").clone().appendTo(target);
+            var div = template.find("div.showcase").clone().appendTo(target);
+            var desc = template.find("p.showcase").clone().appendTo(target);
             var pages = div.children("ul").attr({ tag: "showcase" });
-            var pageItem = pages.children("li:first").clone();
-            var productItem = pageItem.children("div.item:first").clone();
+            var pageItem = pages.children("li").remove().first();
+            var productItem = pageItem.children("div.item").remove().first();
 
             var pageCount = Math.ceil(array.length / pageSize);
             var autoWidth = i(pages.attr("autoWidth"));
             var title = (function (c) { return (c && c.title) ? c.title : $("div#header h1").text(); })(config.partials[name]);
+            var navs = null, navItem = null;
 
-            head.appendTo(target).find("span").text(title + " ");
-            div.appendTo(target);
-            pages.empty().appendTo(div);
-            pageItem.empty();
-            desc.appendTo(target);
+            head.find("span").text(title + " ");
 
             if (light)
             {
-                var navs = template.find("ol.showcase").clone().attr({ name: name });
-                var navItem = navs.children("li:first").clone();
-                navs.empty().appendTo(target).css({ width: pageCount * i(navs.attr("unitWidth")) });
+                var navs = template.find("ol.showcase").clone();
+                var navItem = navs.children("li").remove().first();
+                navs.appendTo(target).css({ width: pageCount * i(navs.attr("unitWidth")) });
                 head.find("a").attr({ name: name, title: title });
                 head.find("label").remove();
             }
@@ -706,6 +790,7 @@
         },
         _generateDetail: function (target, template, json)
         {
+            var _this = this;
             var detail = template.find("div.detail").clone();
             var left = detail.children("div.left");
             var icon = left.children("div.icon");
@@ -713,10 +798,9 @@
             var right = detail.children("div.right");
             var texts = left.children("p.text");
             var right = detail.children("div.right");
-            var h3 = right.children("h3");
             var h2 = right.children("h2");
-            var ps = right.children("p");
-            var more = right.children("div.more").remove().first();
+            var h3 = right.children("h3");
+            var h4 = right.children("h4");
 
             var _price = json.Price == 0 ? "Free" : (json.PriceUnit + json.Price.toFixed(2));
             var _updated = $.formatDate($.resolveDate(json.Updated), "dd MMMM yyyy");
@@ -737,29 +821,97 @@
             h3.text(_classes);
             h2.text(json.Name);
 
-            if (json.Descriptions != undefined && json.Descriptions.length > 0)
+            this._generateDescription(right, json.Descriptions);
+            this._generatePoster(right, json.Posters);
+            this._generateRating(right, json);
+
+            this._loadComment(json.Id, function (json) { _this._generateComment(json); });
+        },
+        _generateDescription: function (target, array)
+        {
+            if (array == undefined || array.length == 0)
             {
-                var tem = right.children("p.desc").first();
-                var convertor = function (i, e) { return tem.clone().hide().removeClass("head").addClass("text").text(e); };
-                ps.after($.convert(json.Descriptions, convertor));
-
-                var maxLength = 200;
-                var texts = ps.parent().children("p.desc.text");
-
-                if (json.Descriptions.length > 1 || json.Descriptions[0].length > maxLength)
-                {
-                    var preview = texts.first().clone().removeClass("text").addClass("preview");
-                    if (preview.text().length > maxLength) { preview.text(preview.text().substring(0, maxLength) + "..."); }
-
-                    ps.after(preview.show());
-                    more.children("a").addClass("down");
-                    texts.last().after(more);
-                }
-                else
-                {
-                    texts.show();
-                }
+                return;
             }
+
+            var maxLength = 200;
+            var desc = target.children("p.desc").remove().first().addClass("text").hide();
+            var elements = $.convert(array, function (i, e) { return desc.clone().text(e); });
+
+            target.children("h4.desc").after(elements);
+            elements = target.children("p.desc.text");
+
+            if (array.length > 1 || array[0].length > maxLength)
+            {
+                var preview = elements.first().clone().removeClass("text").addClass("preview");
+                if (preview.text().length > maxLength) { preview.text(preview.text().substring(0, maxLength) + "..."); }
+
+                target.find("div.more>a").addClass("down");
+                elements.last().after(preview.show());
+            }
+            else
+            {
+                elements.show();
+            }
+        },
+        _generatePoster: function (target, array)
+        {
+            if (array == undefined || array.length == 0)
+            {
+                return;
+            }
+
+            var poster = target.children("div.poster");
+            var wrapper = poster.children("div.wrapper");
+            var ul = wrapper.children("ul");
+            var li = ul.children("li").remove().first().show();
+            var height = li.height();
+            var width = 0;
+
+            $.each(array, function (i, data)
+            {
+                var size = data.ImageSize;
+                var img = li.clone().appendTo(ul).find("img").attr({ "src": data.ImageUrl });
+                var imgWidth = (size == undefined || size.X == 0 || size.Y == 0) ? height : (size.X / size.Y * height);
+
+                width += imgWidth;
+                img.css({ height: height, width: imgWidth });
+            });
+
+            ul.children(":last").css({ marginRight: 0 });
+            ul.css({ width: (array.length - 1) * li.i("margin-right") + width + 1 });
+        },
+        _generateRating: function (target, json)
+        {
+            var rating = target.children("div.rating");
+            var spans = rating.find("ul span");
+            var left = spans.filter(".left");
+            var right = spans.filter(".right");
+            var wrapper = rating.find("div.wrapper");
+
+            var ratingHeight = spans.height();
+            var ratingsCount = json.Ratings == undefined ? 0 : json.Ratings.length;
+            var rightWidth = right.width();
+            var maxStatistical = 0;
+
+            right.filter(".sum").text(ratingsCount + (ratingsCount <= 1 ? " Rating" : " Ratings"));
+            wrapper.css({ width: wrapper.children("span").width() + wrapper.children("label").width() });
+
+            $.each(json.StatisticalRating, function (i, value)
+            {
+                if (value > maxStatistical) { maxStatistical = value; }
+            });
+
+            if (maxStatistical > 0)
+            {
+                $.each(json.StatisticalRating, function (i, value)
+                {
+                    right.filter(".s" + i).children("u").css({ width: (value / maxStatistical) * 100 + "%" });
+                });
+            }
+        },
+        _generateComment: function (array)
+        {
 
         },
         _generateClear: function (tagName)
@@ -770,9 +922,7 @@
         {
             var _this = this;
             var container = $("div#footer ul.menu");
-            var template = container.children("li:first");
-
-            container.empty();
+            var template = container.children("li").remove().first();
 
             $.each(partials, function (name, partial)
             {

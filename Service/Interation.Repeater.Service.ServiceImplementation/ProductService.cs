@@ -19,7 +19,22 @@ namespace Interation.Repeater.Service.ServiceImplementation
         {
             var product = _productRepository.Get(id);
             if (product == null) { return null; }
-            return product.ToContract();
+
+            var productContract =product.ToContract();
+            var productPosters = _productRepository.GetProductPosters(id);
+            var productRatings = _productRepository.GetProductRatings(id);
+
+            if (productPosters != null)
+            {
+                productContract.Posters = productPosters.ConvertAll(refer => refer.ToContract());
+            }
+
+            if (productRatings != null)
+            {
+                productContract.Ratings = productRatings.ConvertAll(refer => refer.ToContract());
+            }
+
+            return productContract;
         }
 
         public List<ProductContract> GetNewest()

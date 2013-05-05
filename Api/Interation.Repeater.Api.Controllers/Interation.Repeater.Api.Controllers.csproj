@@ -42,7 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommentController.cs" />
+    <Compile Include="Extensions\CommentContractExtension.cs" />
     <Compile Include="Extensions\ProductContractExtension.cs" />
+    <Compile Include="Extensions\ProductPosterContractExtension.cs" />
+    <Compile Include="Extensions\ProductRatingContractExtension.cs" />
     <Compile Include="Extensions\TopicContractExtension.cs" />
     <Compile Include="HomeController.cs" />
     <Compile Include="PartialController.cs" />

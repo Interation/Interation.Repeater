@@ -25,7 +25,8 @@ config.langs = {
 
 config.urls = {
     partial: "http://192.168.1.2/api/partial",
-    search: "http://192.168.1.2/api/search"
+    search: "http://192.168.1.2/api/search",
+    comment: "http://192.168.1.2/api/comment"
 };
 
 config.partials = {

@@ -8,6 +8,7 @@ namespace Interation.Repeater.IOC.BindingModules
     {
         public override void Load()
         {
+            Bind<ICommentRepository>().To<CommentRepository>().InSingletonScope();
             Bind<IProductRepository>().To<ProductRepository>().InSingletonScope();
             Bind<ITopicRepository>().To<TopicRepository>().InSingletonScope();
         }

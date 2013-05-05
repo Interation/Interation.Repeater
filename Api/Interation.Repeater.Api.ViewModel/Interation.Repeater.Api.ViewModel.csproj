@@ -39,7 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommentViewModel.cs" />
     <Compile Include="FeaturedViewModel.cs" />
+    <Compile Include="ProductPosterViewModel.cs" />
+    <Compile Include="ProductRatingViewModel.cs" />
     <Compile Include="ProductViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TopicViewModel.cs" />

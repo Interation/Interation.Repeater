@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ICommentRepository.cs" />
     <Compile Include="IProductRepository.cs" />
     <Compile Include="ITopicRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

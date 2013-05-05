@@ -79,6 +79,7 @@
     <Content Include="Js\jquery-1.8.2-win8-1.0.min.js" />
     <Content Include="Js\Controller\Index.js" />
     <Content Include="Js\jquery.extensions.js" />
+    <Content Include="Js\jquery.keyframes.js" />
     <Content Include="Js\Service\Console.js" />
     <Content Include="Js\Service\Repository.js" />
     <Content Include="Player.html" />

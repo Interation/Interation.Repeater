@@ -8,6 +8,7 @@ namespace Interation.Repeater.IOC.BindingModules
     {
         public override void Load()
         {
+            Bind<ICommentService>().To<CommentService>().InSingletonScope();
             Bind<IProductService>().To<ProductService>().InSingletonScope();
             Bind<ITopicService>().To<TopicService>().InSingletonScope();
         }

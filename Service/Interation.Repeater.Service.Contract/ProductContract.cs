@@ -20,6 +20,8 @@ namespace Interation.Repeater.Service.Contract
         public int ScrollingNumber { get; set; }
         public int Downloads { get; set; }
         public Market Market { get; set; }
+        public List<ProductPosterContract> Posters { get; set; }
+        public List<ProductRatingContract> Ratings { get; set; }
         public List<string> Descriptions { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }

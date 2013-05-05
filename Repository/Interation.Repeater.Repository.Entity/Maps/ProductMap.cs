@@ -11,7 +11,7 @@ namespace Interation.Repeater.Repository.Entity.Maps
             this.HasKey(t => t.Id);
             this.Property(t => t.Class).HasColumnType("varchar").HasMaxLength(20);
             this.Property(t => t.Descriptions).HasColumnType("varchar(max)");
-            this.Property(t => t.IconUrl).HasColumnType("varchar").HasMaxLength(500);
+            this.Property(t => t.IconUrl).HasColumnType("varchar").HasMaxLength(5000);
             this.Property(t => t.Name).HasMaxLength(50);
             this.Property(t => t.Price).HasPrecision(6, 2);
             this.Property(t => t.Size).HasPrecision(38, 4);

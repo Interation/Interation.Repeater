@@ -3,7 +3,6 @@
 <head>
     <title>iRepeater App</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link href="css/index.css" rel="stylesheet" />
 </head>
 <body>
@@ -31,6 +30,9 @@
     </div>
 
     <div class="partial template" style="display:none;">
+        <div class="wrapper">
+
+        </div>
         <div class="banner">
             <a class="display" href="javascript:void(0);" name="topic" tag="topic">
                 <img alt="" src="#" />
@@ -73,8 +75,6 @@
         </p>
         <ol class="showcase">
             <li></li>
-            <li></li>
-            <li></li>
         </ol>
         <h2 class="quicklink">
             <span>Quick Links </span>
@@ -112,13 +112,56 @@
             <div class="right">
                 <h3></h3>
                 <h2></h2>
-                <p class="head desc">Description</p>
+                <h4 class="desc">Description</h4>
+                <p class="desc"></p>
                 <div class="more"><a class="more" href="javascript:void(0);">more</a></div>
                 <div class="clear"></div>
-                <div class="screenshot">
+                <div class="poster">
+                    <div class="wrapper">
+                        <ul>
+                            <li style="display:none;"><img alt="" src="#" /></li>
+                        </ul>
+                    </div>
+                </div>
+                <h4 class="rating">Custom Ratings</h4>
+                <div class="rating">
                     <ul>
-                        <li><img alt="" src="#" /></li>
+                        <li>
+                            <span class="left sum"></span>
+                            <span class="right sum"></span>
+                        </li>
+                        <li>
+                            <span class="left s1"></span>
+                            <span class="right bar s1"><u></u></span>
+                        </li>
+                        <li>
+                            <span class="left s2"></span>
+                            <span class="right bar s2"><u></u></span>
+                        </li>
+                        <li>
+                            <span class="left s3"></span>
+                            <span class="right bar s3"><u></u></span>
+                        </li>
+                        <li>
+                            <span class="left s4"></span>
+                            <span class="right bar s4"><u></u></span>
+                        </li>
+                        <li>
+                            <span class="left s5"></span>
+                            <span class="right bar s5"><u></u></span>
+                        </li>
                     </ul>
+                    <div class="rate">
+                        <div class="wrapper">
+                            <span>Tap to Rate: </span>
+                            <label></label>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="comment">Custom Reviews</h4>
+                <div class="button comment">
+                    <a href="javascript:void(0);">Current Version</a>
+                    <a href="javascript:void(0);">All Version</a>
                 </div>
             </div>
         </div>
@@ -126,6 +169,7 @@
 
     <script src="js/cordova-2.5.0.js"></script>
     <script src="js/jquery-1.8.2-win8-1.0.min.js"></script>
+    <script src="js/jquery.keyframes.js"></script>
     <script src="js/jquery.extensions.js"></script>
     <script src="js/base/config.js"></script>
     <script src="js/service/repository.js"></script>
